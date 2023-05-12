@@ -1,6 +1,9 @@
 # ignore oersonal tokens
 secrets.*
 
+# ignore logs dir
+logs
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
