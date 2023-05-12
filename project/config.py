@@ -27,7 +27,7 @@ class Config(BaseModel):
 # создание конфига
 config_dict = {}
 
-for param in Config.__dict__.keys():
+for param in Config.__fields__:
     param: str
     config_dict[param] = os.environ.get(param.upper())
     pass
