@@ -52,6 +52,8 @@ async def aget_cve_by_number(cve_id: str) -> [CveTuple]:
 
     cve = pasre_cve_response(cve_data)
 
+    return [cve]
+
     pass
 
 
