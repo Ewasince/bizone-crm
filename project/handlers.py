@@ -1,8 +1,10 @@
 from aiogram.filters import Command
-from aiogram.types import Message
-from aiogram import Bot, Dispatcher, Router, types
+from aiogram.types import Message, CallbackQuery
+from aiogram import Router, types, F
 
 from config import config
+
+import kb
 
 
 router = Router()
@@ -13,11 +15,26 @@ async def command_start_handler(message: Message) -> None:
     '''
     start command hadler
     '''
-    await message.answer(f"Hello, <b>{message.from_user.full_name}</b>! My name is {config.bot_name}!")
+    await message.answer(f"Привет, <b>{message.from_user.full_name}</b>! Меня зовут {config.bot_name}!" +
+                            " Я помогу тебе получить актуальную информацию о сущетсвующих на данный момент CVE.",
+                            reply_markup=kb.greetings_markup)
+
+
+@router.callback_query(F.data == "menu_btn")
+async def process_callback_main_menu(callback_query: CallbackQuery):
+    '''
+        main menu handler
+    '''
+    await callback_query.message.answer("Главное меню епта (МОЖЕШЬ КНОПКИ НАЖАТЬ ЧУДИЩЕ):", reply_markup=kb.main_markup)
+
+
+@router.callback_query(F.data == "")
+async def process_callback_zalupa(callback_query: CallbackQuery):
+    pass
 
 
 @router.message()
-async def echo_handler(message: types.Message) -> None:
+async def echo_handler(message: Message) -> None:
     '''
     other commands handler
     '''
