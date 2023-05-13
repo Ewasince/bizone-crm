@@ -1,7 +1,10 @@
 import os
 
 from pydantic import BaseModel
+from dotenv import load_dotenv, find_dotenv
 
+load_dotenv("secrets.env")
+load_dotenv("config.env")
 
 class Config(BaseModel):
     '''
