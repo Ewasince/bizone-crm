@@ -29,7 +29,7 @@ async def process_callback_main_menu(callback_query: CallbackQuery):
 
 
 @router.callback_query(F.data == "")
-async def process_callback_zalupa(callback_query: CallbackQuery):
+async def process_callback(callback_query: CallbackQuery):
     pass
 
 
