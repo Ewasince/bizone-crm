@@ -9,6 +9,7 @@ import aiohttp
 from config import config
 
 cve_tuple_fields = ['id',  # cve number
+                    'link',  # ссылка на CVE
                     'cvss2',  # CVSS 2 рейтинг
                     'cvss3',  # CVSS 3.1 рейтинг
                     'score',  # Уровень критичности
@@ -28,7 +29,7 @@ CveTuple = namedtuple('CveTuple', cve_tuple_fields)
 api_url = config.cve_api + config.cve_api_version
 
 
-async def aget_cve_by_number(cve_id: str) -> [CveTuple]:
+async def aget_cve_by_id(cve_id: str) -> [CveTuple]:
     """
     returns a list of CveTuple by passed cve id
     """
@@ -41,7 +42,7 @@ async def aget_cve_by_number(cve_id: str) -> [CveTuple]:
         async with session.get(api_url_with_id) as resp:  # открытие сессии в aiohttp
 
             if resp.status != 200:
-                log.warning(f"[aget_cve_by_number] cannot get url={api_url_with_id}, status_code={resp.status}")
+                log.warning(f"[aget_cve_by_id] cannot get url={api_url_with_id}, status_code={resp.status}")
                 raise Exception('Response error')
 
             cve_data_raw = await resp.text()
@@ -110,8 +111,11 @@ class CveTupleBuilder:
         pass
 
     def __get_data_from_cve_data(self, cve_data) -> None:
-        self.__result_dict['id'] = cve_data['id']
+        cve_id: str = cve_data['id']
+        self.__result_dict['id'] = cve_id
         self.__result_dict['date'] = cve_data['published']
+
+        self.__result_dict['link'] = f'https://nvd.nist.gov/vuln/detail/{cve_id.upper()}'
         pass
 
     def __get_data_from_cve_metrics(self, metrics) -> None:
@@ -219,7 +223,7 @@ class CveTupleBuilder:
                     criteria = product['criteria'].split(':')
                     product_name = criteria[4]
                     if 'versionEndIncluding' in product:
-                        product_version = '<' + product['versionEndIncluding']
+                        product_version = 'меньше, чем ' + product['versionEndIncluding']
                     else:
                         product_version = criteria[5]
                         pass
@@ -271,15 +275,16 @@ class CveTupleBuilder:
 
 if __name__ == '__main__':
     test_cve_id = 'CVE-2019-1010218'
+
+
     # test_cve_id = 'CVE-2017-0144'
     # test_cve_id = 'CVE-2022-42889'
 
     async def test_func():
-        res = await aget_cve_by_number(test_cve_id)
+        res = await aget_cve_by_id(test_cve_id)
 
         print(res)
         pass
-
 
 
     asyncio.run(test_func())

@@ -35,6 +35,7 @@ sample_epss_data_1 = None
 sample_mentions_1 = None
 
 sample_cve_dict_1 = {'id': 'CVE-2019-1010218',
+                     'link': 'https://nvd.nist.gov/vuln/detail/CVE-2019-1010218',
                      'cvss2': 'MEDIUM',
                      'cvss3': 'HIGH',
                      'score': 5.0,
@@ -43,7 +44,7 @@ sample_cve_dict_1 = {'id': 'CVE-2019-1010218',
                      'epss': None,
                      'date': '2019-07-22T18:15:10.917',
                      'product': 'cherokee_web_server',
-                     'versions': '<1.2.103',
+                     'versions': 'меньше, чем 1.2.103',
                      'poc': 'https://i.imgur.com/PWCCyir.png',
                      'description': "Cherokee Webserver Latest Cherokee Web server Upto Version 1.2.103 (Current stable) is affected by: Buffer Overflow - CWE-120. The impact is: Crash. The component is: Main cherokee command. The attack vector is: Overwrite argv[0] to an insane length with execl. The fixed version is: There's no fix yet.",
                      'mentions': None,
