@@ -102,7 +102,7 @@ class CveTupleBuilder:
 
         self.__result_dict['mentions'] = mentions
 
-        self.__result_dict['elimination'] = 'ne ebu'
+        self.__result_dict['elimination'] = None
         pass
 
     def __get_data_from_cve_all_data(self, cve_all_data) -> None:
@@ -129,11 +129,21 @@ class CveTupleBuilder:
         cvss_data = metric_cvss['cvssData']
 
         self.__result_dict['score'] = cvss_data['baseScore']
-        self.__result_dict['vector'] = cvss_data['accessVector']
-        self.__result_dict['complexity'] = cvss_data['accessComplexity']
+
+        if 'accessVector' in cvss_data:
+            self.__result_dict['vector'] = cvss_data['accessVector']
+        elif 'attackVector' in cvss_data:
+            self.__result_dict['vector'] = cvss_data['attackVector']
+            pass
+
+        if 'accessComplexity' in cvss_data:
+            self.__result_dict['complexity'] = cvss_data['accessComplexity']
+        elif 'attackComplexity' in cvss_data:
+            self.__result_dict['complexity'] = cvss_data['attackComplexity']
+            pass
         pass
 
-        score = int(self.__result_dict['score'])
+        score = float(self.__result_dict['score'])
 
         if 'cvssMetricV2' in metrics:
             self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV2'], '2', score)
@@ -202,18 +212,21 @@ class CveTupleBuilder:
         product_versions = []
         for conf in configurations:
             for node in conf['nodes']:
-                product = node['cpeMatch'][0]
-                if product['vulnerable']:
+                for cpe_match in node['cpeMatch']:
+                    product = cpe_match
+                    # if not product['vulnerable']:
+                    #     continue
+                    #     pass
+
                     criteria = product['criteria'].split(':')
                     product_name = criteria[4]
                     if 'versionEndIncluding' in product:
-                        product_version = product['versionEndIncluding']
+                        product_version = '<' + product['versionEndIncluding']
                     else:
                         product_version = criteria[5]
                         pass
                     products_names.append(product_name)
                     product_versions.append(product_version)
-                    pass  # -- if
                 pass  # -- for
             pass  # -- for
 
@@ -260,8 +273,6 @@ class CveTupleBuilder:
 
 if __name__ == '__main__':
     test_cve_id = 'CVE-2019-1010218'
-
-
     # test_cve_id = 'CVE-2017-0144'
     # test_cve_id = 'CVE-2022-42889'
 
