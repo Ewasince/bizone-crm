@@ -54,10 +54,10 @@ async def aget_cve_by_number(cve_id: str) -> [CveTuple]:
 
     cve_all_data = json.loads(cve_data_raw)
 
-    cve_duilder = CveTupleBuilder()
-    cve_duilder.build(cve_all_data, epss_data, mentions)
+    cve_builder = CveTupleBuilder()
+    cve_builder.build(cve_all_data, epss_data, mentions)
 
-    cve = cve_duilder.get_result()
+    cve = cve_builder.get_result()
 
     return [cve]
 
@@ -188,23 +188,21 @@ class CveTupleBuilder:
         pass
 
     def __get_severity_v2(self, score) -> str:
-        if score <= 4.0:
+        if score < 4.0:
             return 'LOW'
-        elif 4.0 < score <= 7.0:
+        elif 4.0 <= score < 7.0:
             return 'MEDIUM'
-        elif 7.0 < score:
+        elif 7.0 <= score:
             return 'HIGH'
 
     def __get_severity_v3(self, score) -> str:
-        if score == 0.0:
-            return 'NONE'
-        elif 0.0 < score <= 4.0:
+        if score < 4.0:
             return 'LOW'
-        elif 4.0 < score <= 7.0:
+        elif 4.0 <= score < 7.0:
             return 'MEDIUM'
-        elif 7.0 < score <= 9.0:
+        elif 7.0 <= score < 9.0:
             return 'HIGH'
-        elif 9.0 < score:
+        elif 9.0 <= score:
             return 'CRITICAL'
 
     def __get_data_from_cve_configurations(self, configurations) -> None:
@@ -278,7 +276,10 @@ if __name__ == '__main__':
 
     async def test_func():
         res = await aget_cve_by_number(test_cve_id)
+
+        print(res)
         pass
+
 
 
     asyncio.run(test_func())
