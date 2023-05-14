@@ -20,8 +20,7 @@ cve_tuple_fields = ['id',  # cve number
                     'poc',  # PoC/CVE WriteUp (С кликабельными ссылками, если есть)
                     'description',  # Описание CVE
                     'mentions',  # Информация о количестве упоминаний о CVE
-                    'elimination',  # Необходимые действия по устранению уязвимости
-                    'cvss_version']  # версия cvss
+                    'elimination']  # Необходимые действия по устранению уязвимости
 
 CveTuple = namedtuple('CveTuple', cve_tuple_fields)
 
@@ -65,46 +64,71 @@ async def aget_cve_by_number(cve_id: str) -> [CveTuple]:
 
 
 class CveTupleBuilder:
-    __result: CveTuple
+    __result_dict: dict
 
     def __init__(self):
         self.reset()
         pass
 
     def reset(self):
-        self.__result = CveTuple(*[None] * 15)
+        self.__result_dict = {k: None for k in cve_tuple_fields}
         pass
 
     def build(self, cve_all_data, epss_data, mentions):
+        # self.__get_data_from_cve_all_data(cve_all_data)
+
         len_vulnerabilities = len(cve_all_data['vulnerabilities'])
         assert len_vulnerabilities == 1, f'Invalid count of vulnerabilities, len={len_vulnerabilities}'
 
         cve_data = cve_all_data['vulnerabilities'][0]['cve']
+        self.__get_data_from_cve_data(cve_data)
 
-        cve_dict = {}
-
-        cve_dict['cvss_version'] = cve_all_data['version']
-
-        cve_dict['id'] = cve_data['id']
-        cve_dict['date'] = cve_data['published']
-
-        cve_dict['epss'] = self.parse_epss(epss_data)
+        self.__result_dict['epss'] = self.parse_epss(epss_data)
 
         metrics = cve_data['metrics']
+        self.__get_data_from_cve_metrics(metrics)
 
-        if len(metrics) != 0:
-            if 'cvssMetricV2' in metrics:
-                metric_cvss = metrics['cvssMetricV2'][0]
-            elif 'cvssMetricV31' in metrics:
-                metric_cvss = metrics['cvssMetricV2'][0]
-            else:
-                raise
-            cvss_data = metric_cvss['cvssData']
-
-            cve_dict['score'] = cvss_data['baseScore']
-            cve_dict['vector'] = cvss_data['accessVector']
-            cve_dict['complexity'] = cvss_data['accessComplexity']
+        if 'configurations' in cve_data:
+            configurations = cve_data['configurations']
+            self.__get_data_from_cve_configurations(configurations)
             pass
+
+        references = cve_data['references']
+        self.__get_data_from_cve_refs(references)
+
+        descriptions = cve_data['descriptions']
+        self.__get_data_from_cve_description(descriptions)
+
+        self.__result_dict['mentions'] = mentions
+
+        self.__result_dict['elimination'] = 'ne ebu'
+        pass
+
+    def __get_data_from_cve_all_data(self, cve_all_data) -> None:
+        self.__result_dict['cvss_version'] = cve_all_data['version']
+        pass
+
+    def __get_data_from_cve_data(self, cve_data) -> None:
+        self.__result_dict['id'] = cve_data['id']
+        self.__result_dict['date'] = cve_data['published']
+        pass
+
+    def __get_data_from_cve_metrics(self, metrics) -> None:
+        if len(metrics) == 0:
+            return
+
+        if 'cvssMetricV2' in metrics:
+            metric_cvss = metrics['cvssMetricV2'][0]
+        elif 'cvssMetricV31' in metrics:
+            metric_cvss = metrics['cvssMetricV2'][0]
+        else:
+            raise
+        cvss_data = metric_cvss['cvssData']
+
+        self.__result_dict['score'] = cvss_data['baseScore']
+        self.__result_dict['vector'] = cvss_data['accessVector']
+        self.__result_dict['complexity'] = cvss_data['accessComplexity']
+        pass
 
         if 'cvssMetricV2' in metrics \
                 and len(metrics['cvssMetricV2']):
@@ -113,7 +137,7 @@ class CveTupleBuilder:
             cvss_data_v2 = cvss_metrics_v2['cvssData']
             if 'baseSeverity' in cvss_data_v2:
                 base_severity_v2 = cvss_data_v2['baseSeverity']
-                cve_dict['cvss31'] = base_severity_v2
+                self.__result_dict['cvss31'] = base_severity_v2
                 pass
 
             pass
@@ -125,69 +149,58 @@ class CveTupleBuilder:
             cvss_data_v31 = cvss_metrics_v31['cvssData']
             if 'baseSeverity' in cvss_data_v31:
                 base_severity_v31 = cvss_data_v31['baseSeverity']
-                cve_dict['cvss31'] = base_severity_v31
+                self.__result_dict['cvss31'] = base_severity_v31
                 pass
             pass
-
         pass
 
-        if 'configurations' in cve_data:
-            products_names = []
-            product_versions = []
-            for conf in cve_data['configurations']:
-                for node in conf['nodes']:
-                    product = node['cpeMatch'][0]
-                    if product['vulnerable']:
-                        criteria = product['criteria'].split(':')
-                        product_name = criteria[4]
-                        if 'versionEndIncluding' in product:
-                            product_version = product['versionEndIncluding']
-                        else:
-                            product_version = criteria[5]
-                            pass
-                        products_names.append(product_name)
-                        product_versions.append(product_version)
-                        pass  # -- if
-                    pass  # -- for
+    def __get_data_from_cve_configurations(self, configurations) -> None:
+        products_names = []
+        product_versions = []
+        for conf in configurations:
+            for node in conf['nodes']:
+                product = node['cpeMatch'][0]
+                if product['vulnerable']:
+                    criteria = product['criteria'].split(':')
+                    product_name = criteria[4]
+                    if 'versionEndIncluding' in product:
+                        product_version = product['versionEndIncluding']
+                    else:
+                        product_version = criteria[5]
+                        pass
+                    products_names.append(product_name)
+                    product_versions.append(product_version)
+                    pass  # -- if
                 pass  # -- for
+            pass  # -- for
 
-            cve_dict['product'] = ';'.join(products_names)
-            cve_dict['versions'] = ';'.join(product_versions)
-            pass
+        self.__result_dict['product'] = '\n'.join(products_names)
+        self.__result_dict['versions'] = '\n'.join(product_versions)
+        pass
 
-        references = []
-        for ref in cve_data['references']:
+    def __get_data_from_cve_refs(self, references) -> None:
+        references_urls = []
+        for ref in references:
             url = ref['url']
-            references.append(url)
+            references_urls.append(url)
             pass
 
-        cve_dict['poc'] = '\n'.join(references)
+        self.__result_dict['poc'] = '\n'.join(references_urls)
+        pass
 
-        for description in cve_data['descriptions']:
+    def __get_data_from_cve_description(self, descriptions) -> None:
+        for description in descriptions:
             if description['lang'] == 'ru':
-                cve_dict['description'] = description['value']
+                self.__result_dict['description'] = description['value']
                 break
             elif description['lang'] == 'en':
-                cve_dict['description'] = description['value']
+                self.__result_dict['description'] = description['value']
                 break
                 pass  # --elif
             pass  # --for
         else:  # when there is no suitable language
-            cve_dict['description'] = cve_data['descriptions'][0]['value']
+            self.__result_dict['description'] = descriptions[0]['value']
             pass
-
-        cve_dict['mentions'] = mentions
-
-        cve_dict['elimination'] = 'ne ebu'
-
-        for field in cve_tuple_fields:
-            if field not in cve_dict:
-                cve_dict[field] = None
-                pass
-            pass
-
-        self.__result = CveTuple(**cve_dict)
-
         pass
 
     def parse_epss(self, epss_data) -> str:
@@ -199,12 +212,15 @@ class CveTupleBuilder:
         return None
 
     def get_result(self) -> CveTuple:
-        return self.__result
+        return CveTuple(**self.__result_dict)
 
 
 if __name__ == '__main__':
     test_cve_id = 'CVE-2019-1010218'
 
+
+    # test_cve_id = 'CVE-2017-0144'
+    # test_cve_id = 'CVE-2022-42889'
 
     async def test_func():
         res = await aget_cve_by_number(test_cve_id)
