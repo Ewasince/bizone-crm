@@ -1,5 +1,5 @@
-cve_all_data_1 = {'resultsPerPage': 1, 'startIndex': 0, 'totalResults': 1, 'format': 'NVD_CVE',
-                'version': '2.0', 'timestamp': '2023-05-14T10:48:50.417', 'vulnerabilities': [{'cve': {
+sample_cve_all_data_1 = {'resultsPerPage': 1, 'startIndex': 0, 'totalResults': 1, 'format': 'NVD_CVE',
+                  'version': '2.0', 'timestamp': '2023-05-14T10:48:50.417', 'vulnerabilities': [{'cve': {
         'id': 'CVE-2019-1010218', 'sourceIdentifier': 'josh@bress.net', 'published': '2019-07-22T18:15:10.917',
         'lastModified': '2020-09-30T13:40:18.163', 'vulnStatus': 'Analyzed', 'descriptions': [{'lang': 'en',
                                                                                                'value': "Cherokee Webserver Latest Cherokee Web server Upto Version 1.2.103 (Current stable) is affected by: Buffer Overflow - CWE-120. The impact is: Crash. The component is: Main cherokee command. The attack vector is: Overwrite argv[0] to an insane length with execl. The fixed version is: There's no fix yet."},
@@ -31,5 +31,20 @@ cve_all_data_1 = {'resultsPerPage': 1, 'startIndex': 0, 'totalResults': 1, 'form
                                                               'matchCriteriaId': 'DCE1E311-F9E5-4752-9F51-D5DA78B7BBFA'}]}]}],
         'references': [{'url': 'https://i.imgur.com/PWCCyir.png', 'source': 'josh@bress.net',
                         'tags': ['Exploit', 'Third Party Advisory']}]}}]}
-epss_data = None
-mentions = None
+sample_epss_data_1 = None
+sample_mentions_1 = None
+
+sample_cve_dict_1 = {'id': 'CVE-2019-1010218',
+                     'cvss2': 'MEDIUM',
+                     'cvss3': 'HIGH',
+                     'score': 5.0,
+                     'vector': 'NETWORK',
+                     'complexity': 'LOW',
+                     'epss': None,
+                     'date': '2019-07-22T18:15:10.917',
+                     'product': 'cherokee_web_server',
+                     'versions': '1.2.103',
+                     'poc': 'https://i.imgur.com/PWCCyir.png',
+                     'description': "Cherokee Webserver Latest Cherokee Web server Upto Version 1.2.103 (Current stable) is affected by: Buffer Overflow - CWE-120. The impact is: Crash. The component is: Main cherokee command. The attack vector is: Overwrite argv[0] to an insane length with execl. The fixed version is: There's no fix yet.",
+                     'mentions': None,
+                     'elimination': 'ne ebu'}

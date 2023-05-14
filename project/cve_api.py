@@ -2,6 +2,7 @@ import asyncio
 import json
 from collections import namedtuple
 import logging as log
+from typing import Optional
 
 import aiohttp
 
@@ -9,7 +10,7 @@ from config import config
 
 cve_tuple_fields = ['id',  # cve number
                     'cvss2',  # CVSS 2 рейтинг
-                    'cvss31',  # CVSS 3.1 рейтинг
+                    'cvss3',  # CVSS 3.1 рейтинг
                     'score',  # Уровень критичности
                     'vector',  # Уровень критичности
                     'complexity',  # Уровень критичности
@@ -119,6 +120,8 @@ class CveTupleBuilder:
 
         if 'cvssMetricV2' in metrics:
             metric_cvss = metrics['cvssMetricV2'][0]
+        elif 'cvssMetricV30' in metrics:
+            metric_cvss = metrics['cvssMetricV30'][0]
         elif 'cvssMetricV31' in metrics:
             metric_cvss = metrics['cvssMetricV31'][0]
         else:
@@ -130,29 +133,69 @@ class CveTupleBuilder:
         self.__result_dict['complexity'] = cvss_data['accessComplexity']
         pass
 
-        if 'cvssMetricV2' in metrics \
-                and len(metrics['cvssMetricV2']):
-            cvss_metrics_v2_list = metrics['cvssMetricV2']
-            cvss_metrics_v2 = cvss_metrics_v2_list[0]
-            cvss_data_v2 = cvss_metrics_v2['cvssData']
-            if 'baseSeverity' in cvss_data_v2:
-                base_severity_v2 = cvss_data_v2['baseSeverity']
-                self.__result_dict['cvss2'] = base_severity_v2
-                pass
+        score = int(self.__result_dict['score'])
 
+        if 'cvssMetricV2' in metrics:
+            self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV2'], '2', score)
             pass
 
-        if 'cvssMetricV31' in metrics \
-                and len(metrics['cvssMetricV31']):
-            cvss_metrics_v31_list = metrics['cvssMetricV31']
-            cvss_metrics_v31 = cvss_metrics_v31_list[0]
-            cvss_data_v31 = cvss_metrics_v31['cvssData']
-            if 'baseSeverity' in cvss_data_v31:
-                base_severity_v31 = cvss_data_v31['baseSeverity']
-                self.__result_dict['cvss31'] = base_severity_v31
-                pass
+        if 'cvssMetricV30' in metrics:
+            self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV30'], '3', score)
             pass
+        elif 'cvssMetricV31' in metrics:
+            self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV31'], '31', score)
+            pass
+
         pass
+
+    def __get_cvss_from_cvss_metrics(self, metrics_list, version: str, score: float) -> None:
+        cvss_metrics = metrics_list[0]
+        cvss_data = cvss_metrics['cvssData']
+        if 'baseSeverity' in cvss_data:
+            base_severity = cvss_data['baseSeverity']
+            pass
+        else:
+            match version:
+                case '2':
+                    base_severity = self.__get_severity_v2(score)
+                case '3':
+                    base_severity = self.__get_severity_v3(score)
+                case _:
+                    base_severity = self.__get_severity_v3(score)
+            pass
+
+        # save cvss severity
+        match version:
+            case '2':
+                self.__result_dict['cvss2'] = base_severity
+                pass
+            case '3':
+                self.__result_dict['cvss3'] = base_severity
+                pass
+            case _:
+                self.__result_dict['cvss3'] = base_severity
+                pass
+        pass
+
+    def __get_severity_v2(self, score) -> str:
+        if score <= 4.0:
+            return 'LOW'
+        elif 4.0 < score <= 7.0:
+            return 'MEDIUM'
+        elif 7.0 < score:
+            return 'HIGH'
+
+    def __get_severity_v3(self, score) -> str:
+        if score == 0.0:
+            return 'NONE'
+        elif 0.0 < score <= 4.0:
+            return 'LOW'
+        elif 4.0 < score <= 7.0:
+            return 'MEDIUM'
+        elif 7.0 < score <= 9.0:
+            return 'HIGH'
+        elif 9.0 < score:
+            return 'CRITICAL'
 
     def __get_data_from_cve_configurations(self, configurations) -> None:
         products_names = []
