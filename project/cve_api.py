@@ -120,7 +120,7 @@ class CveTupleBuilder:
         if 'cvssMetricV2' in metrics:
             metric_cvss = metrics['cvssMetricV2'][0]
         elif 'cvssMetricV31' in metrics:
-            metric_cvss = metrics['cvssMetricV2'][0]
+            metric_cvss = metrics['cvssMetricV31'][0]
         else:
             raise
         cvss_data = metric_cvss['cvssData']
@@ -137,7 +137,7 @@ class CveTupleBuilder:
             cvss_data_v2 = cvss_metrics_v2['cvssData']
             if 'baseSeverity' in cvss_data_v2:
                 base_severity_v2 = cvss_data_v2['baseSeverity']
-                self.__result_dict['cvss31'] = base_severity_v2
+                self.__result_dict['cvss2'] = base_severity_v2
                 pass
 
             pass
