@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from cve_api import CveTuple, CveTupleBuilder, cve_tuple_fields
+from api.cve_builder.cve_builder import CveTupleBuilder, cve_tuple_fields, CveTuple
 from test_support import sample_cve_all_data_1, sample_epss_data_1, sample_mentions_1, sample_cve_dict_1
 
 
