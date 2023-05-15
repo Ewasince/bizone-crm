@@ -1,15 +1,37 @@
 version: "3.9"
 
 services:
-    tg_bot:
-        restart: always
+    product:
+        restart: no
         build:
-            context: ..\bot_cve
-        container_name: tg_bot
+            context: ..\project
+        container_name: product_bot
         env_file:
-            - .env
+            - config.env
         volumes:
             - tg_bot:/app
-        command: python3 project/main.py
+        command: python main.py
+    debug:
+        restart: no
+        build:
+            context: ..\project
+        container_name: debug_bot
+        env_file:
+            - config.debug.env
+        volumes:
+            - tg_bot:/app
+        command: python -m pdb main.py
+    test:
+        restart: no
+        build:
+            context: ..\tests
+        container_name: tests
+        env_file:
+            - config.tests.env
+        volumes:
+            - test_bot:/app
+        command: python -m pytest test_cve_api.py --alluredir results
 volumes:
     tg_bot:
+    bot_debug:
+    test_bot:

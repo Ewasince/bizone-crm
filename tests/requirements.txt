@@ -15,3 +15,8 @@ pydantic==1.10.7
 pytz==2023.3
 typing_extensions==4.5.0
 yarl==1.9.2
+ipdb==0.13.13
+ipython==8.13.2
+pytest==7.3.1
+allure-pytest==2.13.2
+allure-python-commons==2.13.2
