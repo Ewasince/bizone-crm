@@ -28,7 +28,7 @@ async def aget_cve_by_params(cvss_ver: str,
                              vector: Optional[List[str]],
                              complexity: Optional[List[str]],
                              epss: Optional[Tuple[float, float]],
-                             date: Optional[List[datetime]],
+                             date: Optional[List[str]],
                              product: Optional[str],
                              vendor: Optional[str],
                              mentions: Optional[Tuple[float, float]]
@@ -57,7 +57,7 @@ async def aget_cve_by_params(cvss_ver: str,
     nist_api = NistApiFactory.get_instance(cvss_ver)
 
     if cvss is not None:
-        nist_api.set_cvss_param(cvss)
+        nist_api.set_severity_param(cvss)
         pass
 
     if vector is not None:

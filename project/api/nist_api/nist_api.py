@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Tuple, List
 
 import aiohttp
+import dateutil.parser as isoparser
 from pytz import timezone
 
 from api.cve_builder.cve_builder import CveTupleBuilder, CveTuple
@@ -12,14 +13,27 @@ from api.cve_builder.cve_builder import CveTupleBuilder, CveTuple
 from config import config
 
 
-class NistApi:
+class ParseDateException(ValueError):
+    pass
 
-    # __params: dict
+
+class NistApi:
+    VECTORS_ABBR: dict = {
+        'local': 'L',
+        'adjacent network': 'A',
+        'network': 'N'
+    }
+    COMPLEXITY_ABBR: dict = {
+        'low': 'L',
+        'medium': 'M',
+        'high': 'H'
+    }
 
     def __init__(self):
         # cvss version params
         self.__severity_cvss_param_name: str = ''
         self.__metrics_cvss_param_name: str = ''
+        self.__severity: List[str] = []
 
         # api url
         self.__api_url: str = config.cve_api + config.cve_api_version
@@ -101,13 +115,6 @@ class NistApi:
         """
 
         params: dict = self.__prepare_params()
-
-        url_params_combination: List[str] = []
-
-        # for values in params.values():
-        #     # url_params_combination Я ЕБАЛ ЭТУ ХУЙНЮ
-        #     # url_params.append(f'{k}={v}')
-        #     pass
 
         params_list = self.recursive_queries(list(params.values()))
 
@@ -265,25 +272,57 @@ class NistApi:
         self.__id_param = cve_id
         pass
 
-    def set_cvss_param(self, level: List[str]):
+    def set_severity_param(self, level: List[str]):
         severity_param = [l.upper() for l in level]
+        # for s in severity_param:
+        #     test3 = self
+        #     test4 = test3.__severity
+        #     test2 = self.VECTORS_ABBR
+        #     test1 = self.__severity
+        #     test = set(test1)
+        #     assert s in {self.__severity,}, "unknown severity level"
+        #     pass
+        # FIXME: понять пончему он не видит данные от наследуемого класса
+
         self.__severity_param = tuple(severity_param)
         pass
 
     def set_vector_param(self, vector: List[str]):
-        self.__vector_param = tuple(vector)
+        vector_param = [v.lower() for v in vector]
+        vector_param = [NistApi.VECTORS_ABBR[v] for v in vector_param]
+        self.__vector_param = tuple(vector_param)
         pass
 
     def set_complexity_param(self, complexity: List[str]):
-        self.__complexities_param = tuple(complexity)
+        complexity_param = [v.lower() for v in complexity]
+        complexity_param = [NistApi.COMPLEXITY_ABBR[v] for v in complexity_param]
+        self.__complexities_param = tuple(complexity_param)
         pass
 
     def set_epss_param(self, epss: Tuple[float, float]):
         self.__epss_param = tuple(epss)
         pass
 
-    def set_date_param(self, date: [datetime]):
-        self.__date_param = tuple(date)
+    def set_date_param(self, date: (str, str)):
+        # TODO: тут может быть ваш парсер
+
+        start_date_str = date[0]
+        end_date_str = date[1]
+
+        try:
+            start_date = isoparser.isoparse(start_date_str)
+        except ValueError as e:
+            log.warning(f"[set_date_param] FAIL Error parsing start date={start_date_str}, e={e}")
+            raise ParseDateException('cannot parse date')
+            pass
+        try:
+            end_date = isoparser.isoparse(end_date_str)
+        except ValueError as e:
+            log.warning(f"[set_date_param] FAIL Error parsing end date={end_date_str}, e={e}")
+            raise ParseDateException('cannot parse date')
+            pass
+
+        self.__date_param = (start_date, end_date)
         pass
 
     def set_product_param(self, product: str):
