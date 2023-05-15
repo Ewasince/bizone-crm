@@ -36,6 +36,21 @@ async def process_callback_find_cve(callback_query: CallbackQuery, state: FSMCon
     """
         find_cve_menu handler
     """
+
+    """
+        ТУТ СПИСОК ВСЕХ ПАРАМЕТРОВ 
+        TODO ПОТОМ убрать коммент
+    """
+    await state.update_data(
+        vendor="",
+        product="",
+        start_date="",
+        end_date="",
+        cvss_version="",
+        cvss_param="",
+        vector="",
+        complexity=""
+    )
     user_data = await state.get_data()
 
     await callback_query.message.answer(f"Параметры запроса поиска: {user_data}", reply_markup=find_cve_markup)

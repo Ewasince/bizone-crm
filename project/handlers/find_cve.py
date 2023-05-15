@@ -3,11 +3,10 @@ from aiogram.types import Message, CallbackQuery
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from datetime import datetime
+from typing import Dict
 
 from cve_api import aget_cve_by_id
 from forms import FindCVEGroup
-
-from config import config
 
 import logging as log
 
@@ -20,6 +19,8 @@ from keyboards.complexity_menu import complexity_markup
 router = Router()
 
 # TODO верхний регист при вводе CVE
+# TODO версия ПО
+
 
 @router.message(FindCVEGroup.id)
 async def adding_id(message: Message, state: FSMContext):
@@ -79,6 +80,30 @@ async def adding_id(message: Message, state: FSMContext):
     )
 
 
+@router.callback_query(F.data == "find_cve_vendor")
+async def process_callback_add_vendor(callback_query: CallbackQuery, state: FSMContext):
+    """
+        find cve_menu: Handler for the button that adds the vendor parameter
+    """
+    await callback_query.message.edit_text("Введите название вендора")
+    await state.set_state(FindCVEGroup.vendor)
+
+
+@router.message(FindCVEGroup.vendor)
+async def add_vendor(message: Message, state: FSMContext):
+    input_vendor: str = message.text
+
+    await state.update_data(vendor=input_vendor)
+
+    await state.set_state(FindCVEGroup.default_state)
+    user_date: Dict[str, str] = await state.get_data()
+
+    await message.answer(
+        f"Название вендора успешно установлено. Теперь данные: {user_date}",
+        reply_markup=find_cve_markup
+    ) 
+
+
 @router.callback_query(F.data == "find_cve_name")
 async def process_callback_add_product_name(callback_query: CallbackQuery, state: FSMContext):
     """
@@ -95,6 +120,7 @@ async def addiing_product_name(message: Message, state: FSMContext):
     await state.update_data(product=inserted_name)
 
     user_data = await state.get_data()
+    await state.set_state(FindCVEGroup.default_state)
 
     await message.answer(
         f"Название продукта установлено. Теперь данные: {user_data}",
@@ -131,6 +157,7 @@ async def adding_start_date(message: Message, state: FSMContext):
         )
 
     user_data = await state.get_data()
+    await state.set_state(FindCVEGroup.default_state)
 
     await message.answer(
         f"Начальная дата установлена. Теперь данные: {user_data}",
@@ -154,7 +181,7 @@ async def addind_end_date(message: Message, state: FSMContext):
     try:
         datetime.strptime(inserted_date, "%d.%m.%Y")
 
-        await state.update_data(start_date=inserted_date)
+        await state.update_data(end_date=inserted_date)
 
     except ValueError as e:
         log.debug(e)
@@ -167,6 +194,7 @@ async def addind_end_date(message: Message, state: FSMContext):
         )
 
     user_data = await state.get_data()
+    await state.set_state(FindCVEGroup.default_state)
 
     await message.answer(
         f"Конечная дата установлена. Теперь данные: {user_data}",
@@ -208,3 +236,23 @@ async def process_callback_add_cvss(callback_query: CallbackQuery, state: FSMCon
         "Какова сложность доступа?",
         reply_markup=complexity_markup
     )
+
+
+@router.callback_query(F.data == "find_cve_submit")
+async def proccess_callback_cve_submit(callback_query: CallbackQuery, state: FSMContext):
+    """
+        find_cve_menu: Handler for the button submit params of cve and do request for api
+    """
+    request_params: Dict[str, str] = await state.get_data()
+
+    """
+        TODO ТУТ ЗАПРОС ПО ПАРАМЕТРАМ ФОРМАТ ПАРАМЕТРОВ МОЖЕМ ПОДОГНАТЬ ПОД API-ШКУ
+        пока просто вывод параметров списком в сообщения
+    """
+    await callback_query.message.answer(
+        f"Введенные параметры: {request_params}",
+        reply_markup=main_markup
+    )
+    
+
+
