@@ -29,11 +29,14 @@ class NistApi:
         'high': 'H'
     }
 
-    def __init__(self):
+    def __init__(self,
+                 severity_param_name,
+                 metric_param_name,
+                 severities_list):
         # cvss version params
-        self.__severity_cvss_param_name: str = ''
-        self.__metrics_cvss_param_name: str = ''
-        self.__severity: List[str] = []
+        self.__severity_cvss_param_name: str = severity_param_name
+        self.__metrics_cvss_param_name: str = metric_param_name
+        self.__severity: List[str] = severities_list
 
         # api url
         self.__api_url: str = config.cve_api + config.cve_api_version
@@ -199,10 +202,12 @@ class NistApi:
             result_metrics_params = []
 
             if len(vectors) == 0:
-                result_metrics_params = complexities
+                for c in complexities:
+                    result_metrics_params.append(f'{self.__metrics_cvss_param_name}={c}')
                 pass
             elif len(complexities) == 0:
-                result_metrics_params = vectors
+                for v in vectors:
+                    result_metrics_params.append(f'{self.__metrics_cvss_param_name}={v}')
                 pass
             else:
                 for v in vectors:
@@ -274,14 +279,14 @@ class NistApi:
 
     def set_severity_param(self, level: List[str]):
         severity_param = [l.upper() for l in level]
-        # for s in severity_param:
-        #     test3 = self
-        #     test4 = test3.__severity
-        #     test2 = self.VECTORS_ABBR
-        #     test1 = self.__severity
-        #     test = set(test1)
-        #     assert s in {self.__severity,}, "unknown severity level"
-        #     pass
+        for s in severity_param:
+            # test3 = self
+            # test4 = test3.__severity
+            # test2 = self.VECTORS_ABBR
+            # test1 = self.__severity
+            # test = set(test1)
+            assert s in self.__severity, "unknown severity level"
+            pass
         # FIXME: понять пончему он не видит данные от наследуемого класса
 
         self.__severity_param = tuple(severity_param)

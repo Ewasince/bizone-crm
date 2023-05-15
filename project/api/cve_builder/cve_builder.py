@@ -38,8 +38,8 @@ class CveTupleBuilder:
     def build(self, cve_all_data, epss_data, mentions):
         # self.__get_data_from_cve_all_data(cve_all_data)
 
-        len_vulnerabilities = len(cve_all_data['vulnerabilities'])
-        assert len_vulnerabilities == 1, f'Invalid count of vulnerabilities, len={len_vulnerabilities}'
+        # len_vulnerabilities = len(cve_all_data['vulnerabilities'])
+        # assert len_vulnerabilities == 1, f'Invalid count of vulnerabilities, len={len_vulnerabilities}'
 
         for vulnerability in cve_all_data['vulnerabilities']:
 
