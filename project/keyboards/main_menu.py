@@ -1,0 +1,49 @@
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+# Greetings menu buttons
+inline_btn_menu = InlineKeyboardButton(
+    text="Меню",
+    callback_data="menu_btn"
+)
+
+# Main menu buttons
+inline_btn_find_by_id = InlineKeyboardButton(
+    text="CVE по Id",
+    callback_data="find_cve_by_id"
+)
+
+inline_btn_most_valuable_cve = InlineKeyboardButton(
+    text="Значимые CVE",
+    callback_data="valuable_cve"
+)
+
+inline_btn_find_cve_web = InlineKeyboardButton(
+    text="CVE по параметрам (web)",
+      callback_data="find_cve_web"
+)
+
+inline_btn_find_cve_tg = InlineKeyboardButton(
+    text="CVE по параметрам (tg)",
+    callback_data="find_cve_tg"
+)
+
+inline_btn_subscribe_on_news = InlineKeyboardButton(
+    text="Подписка на новости выхода CVE",
+    callback_data="subscribe_on_news"
+)
+
+# markups 
+greetings_markup =  InlineKeyboardMarkup(
+    inline_keyboard=[
+        [inline_btn_menu]
+    ]
+)
+
+main_markup = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [inline_btn_find_by_id],
+        [inline_btn_find_cve_tg, inline_btn_find_cve_web],
+        [inline_btn_most_valuable_cve],
+        [inline_btn_subscribe_on_news]
+    ]
+)

@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher
 
 from config import config
 
-from handlers import common_router, searching_cve_router
+from handlers import common_router, find_cve_router,cvss_router, vector_router, complexity_router
 
 log = logging.getLogger('')
 log.setLevel(logging.DEBUG)
@@ -34,8 +34,14 @@ log.addHandler(file_handler)
 
 async def main() -> None:
     dp = Dispatcher()
-    dp.include_router(searching_cve_router)
-    dp.include_router(common_router)
+
+    dp.include_routers(
+        find_cve_router,
+        vector_router,
+        common_router,
+        cvss_router, 
+        complexity_router
+    )
 
     bot = Bot(config.bot_token, parse_mode="HTML")
     await dp.start_polling(bot)

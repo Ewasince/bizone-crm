@@ -9,6 +9,6 @@ from config import config
 
 import logging as log
 
-import kb
+import keyboards.valyable_cve_menu as kb
 
 
