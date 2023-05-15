@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+    tg_bot:
+        restart: always
+        build:
+            context: ..\bot_cve
+        container_name: tg_bot
+        env_file:
+            - .env
+        volumes:
+            - tg_bot:/app
+        command: python3 project/main.py
+volumes:
+    tg_bot:
