@@ -8,8 +8,8 @@ from typing import List
 
 class TranslateBuilder:
 
-    def __init__(self):
-        self.__translator: TranslatorApi = TranslatorApi()
+    def __init__(self, translate_api: TranslatorApi):
+        self.__translator: TranslatorApi = translate_api
         pass
 
     async def a_bunch_translate(self, cve_list: List[Cve], only_first: bool = True):

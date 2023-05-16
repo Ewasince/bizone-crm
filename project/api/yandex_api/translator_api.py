@@ -33,7 +33,8 @@ class TranslatorApi:
             async with session.post(TranslatorApi.__url,
                                     json=body,
                                     headers=headers) as resp:  # открытие сессии в aiohttp
-
+                log.debug(
+                    f"[TranslatorApi] [a_translate] url request, url={TranslatorApi.__url}, json={body}, headers={headers}")
                 if resp.status != 200:
                     log.warning(
                         f"[a_execute_request] cannot get json={body}, headers={headers}, status_code={resp.status}")

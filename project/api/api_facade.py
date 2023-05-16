@@ -1,7 +1,10 @@
+from api.builders.epss_builder import EpssBuilder
 from api.builders.translate_builder import TranslateBuilder
 from api.cve_repository import CveRepository
+from api.epss_api.epss_api import EpssApi
 from api.nist_api.nist_api import NistApi
 from api.trends_api.trends_api import TrendsApi
+from api.yandex_api.translator_api import TranslatorApi
 
 
 def get_cve_repo(ver_cvss):
@@ -11,14 +14,19 @@ def get_cve_repo(ver_cvss):
     :param ver_cvss: Версия CVSS. Пример: '2', '31', None
     :return:
     """
-    translate_builder = TranslateBuilder()
+
+    translator_api = TranslatorApi()
+    translate_builder = TranslateBuilder(translator_api)
+
     nist_api = NistApi.factory_method(ver_cvss)
     trends_api = TrendsApi()
 
-    cve_repo = CveRepository(nist_api, translate_builder,trends_api)
+    epss_api = EpssApi()
+    epss_builder = EpssBuilder(epss_api)
+
+    cve_repo = CveRepository(nist_api, translate_builder, trends_api, epss_builder)
 
     return cve_repo
-
 
 # async def test_a_get_cve_by_id():
 #     test_cve_id = 'CVE-2019-1010218'

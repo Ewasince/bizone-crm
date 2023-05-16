@@ -79,7 +79,8 @@ class NistApi:
         async with aiohttp.ClientSession() as session:
             for url in self.__request_url:
                 async with session.get(url) as resp:  # открытие сессии в aiohttp
-
+                    log.debug(
+                        f"[NistApi] [a_execute_request] url request, url={url}")
                     if resp.status != 200:
                         log.warning(
                             f"[a_execute_request] cannot get url={self.__request_url}, status_code={resp.status}")

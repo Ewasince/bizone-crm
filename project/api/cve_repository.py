@@ -2,6 +2,7 @@ import logging as log
 from typing import Optional, List, Tuple
 
 from api.builders.cve_builder import Cve
+from api.builders.epss_builder import EpssBuilder
 from api.builders.translate_builder import TranslateBuilder
 from api.builders.trends_cve_builder import CveTrendsTuple
 from api.nist_api.nist_api import NistApi
@@ -11,10 +12,15 @@ from config import config
 
 class CveRepository:
 
-    def __init__(self, nist_api, translate_builder, trends_api):
+    def __init__(self,
+                 nist_api: NistApi,
+                 translate_builder: TranslateBuilder,
+                 trends_api: TrendsApi,
+                 epss_api: EpssBuilder):
         self.__nist_api: NistApi = nist_api
         self.__translate_builder: TranslateBuilder = translate_builder
         self.__trends_api: TrendsApi = trends_api
+        self.__epss_api = epss_api
         pass
 
     async def a_get_cve_by_id(self, cve_id: str) -> List[Cve]:
@@ -136,5 +142,9 @@ class CveRepository:
             cves_list = await self.__translate_builder.a_bunch_translate(cves_list)
             pass
 
-        return cves_list
+        if config.add_epss:
+            cves_list = await self.__epss_api.a_bunch_add_epss(cves_list)
+            pass
 
+
+        return cves_list
