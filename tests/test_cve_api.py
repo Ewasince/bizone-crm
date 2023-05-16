@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from api.cve_builder.cve_builder import CveTupleBuilder, cve_tuple_fields, CveTuple
+from api.builders.cve_builder import CveTupleBuilder, cve_tuple_fields, CveTuple
 from test_support import sample_cve_all_data_1, sample_epss_data_1, sample_mentions_1, sample_cve_dict_1
 
 
@@ -30,7 +30,7 @@ class TestCveTupleBuilder(TestCase):
         # assert
         self.cve_builder.reset()
 
-        expected = self.empty_cve
+        expected = [self.empty_cve]
         actual = self.cve_builder.get_result()
 
         self.assertEqual(expected, actual)
@@ -41,7 +41,7 @@ class TestCveTupleBuilder(TestCase):
         self.cve_builder.build(self.cve_all_data, sample_epss_data_1, sample_mentions_1)
 
         # assert
-        expected = self.cve_tuple
+        expected = [self.cve_tuple]
         actual = self.cve_builder.get_result()
 
         self.assertEqual(expected, actual)
@@ -52,7 +52,7 @@ class TestCveTupleBuilder(TestCase):
         self.cve_builder._CveTupleBuilder__result_dict = self.cve_tuple_dict
 
         # assert
-        expected = self.cve_tuple
+        expected = [self.cve_tuple]
         actual = self.cve_builder.get_result()
 
         self.assertEqual(expected, actual)

@@ -2,7 +2,7 @@ import logging as log
 from collections import namedtuple
 from typing import Optional, List
 
-from api.nist_api.cvss_enum import CvssVerEnum
+from api.nist_api.enums import CvssVerEnum
 
 cve_tuple_fields = ['id',  # cve id
                     'link',  # ссылка на CVE

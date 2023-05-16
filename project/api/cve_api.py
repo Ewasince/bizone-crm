@@ -5,7 +5,6 @@ from datetime import datetime
 from api.nist_api.nist_api import NistApi
 from api.builders.cve_builder import CveTuple
 from api.builders.trends_cve_builder import CveTrendsTuple
-from api.nist_api.nist_api_factory import NistApiFactory
 from api.trends_api.trends_api import TrendsApi
 
 
@@ -30,7 +29,7 @@ async def aget_cve_by_params(cvss_ver: str,
                              vector: Optional[List[str]],
                              complexity: Optional[List[str]],
                              epss: Optional[Tuple[float, float]],
-                             date: Optional[List[str]],
+                             date: Optional[Tuple[str, str]],
                              product: Optional[str],
                              vendor: Optional[str],
                              mentions: Optional[Tuple[float, float]]
@@ -41,7 +40,7 @@ async def aget_cve_by_params(cvss_ver: str,
 
 
     :param self:
-    :param cvss_ver: Версия CVSS. Пример: '2', '31'
+    :param cvss_ver: Версия CVSS. Пример: '2', '31', None
     :param cvss: список из уровней опасности, пример: ['HIGH', 'LOW'] ['MEDIUM']
     :param qm: пока пустой параметр
     :param vector: список векторов атаки, пример: ['NETWORK', 'LOCAL'], ['ADJACENT NETWORK']
@@ -56,25 +55,29 @@ async def aget_cve_by_params(cvss_ver: str,
     :return:
     """
 
-    nist_api = NistApiFactory.get_instance(cvss_ver)
+    nist_api = NistApi.factory_method(cvss_ver)
 
+    # if any(map(lambda x: x is not None, cvss)):
     if cvss is not None:
         nist_api.set_severity_param(cvss)
         pass
 
+    # if any(map(lambda x: x is not None, vector)):
     if vector is not None:
         nist_api.set_vector_param(vector)
         pass
 
+    # if any(map(lambda x: x is not None, complexity)):
     if complexity is not None:
         nist_api.set_complexity_param(complexity)
         pass
 
+    # if any(map(lambda x: x is not None, epss)):
     if epss is not None:
         nist_api.set_epss_param(epss)
         pass
 
-    if date is not None:
+    if any(map(lambda x: x is not None, date)):
         nist_api.set_date_param(date)
         pass
 
@@ -84,8 +87,9 @@ async def aget_cve_by_params(cvss_ver: str,
 
     if vendor is not None:
         nist_api.set_vendor_param(vendor)
-        pass    
+        pass
 
+    # if any(map(lambda x: x is not None, mentions)):
     if mentions is not None:
         nist_api.set_mentions_param(mentions)
         pass

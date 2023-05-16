@@ -2,7 +2,9 @@ from aiogram.types import Message, CallbackQuery
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Any
+
+import dateutil.parser as isoparser
 
 from api.cve_api import aget_cve_by_id, aget_cve_by_params
 from forms import FindCVEGroup
@@ -18,6 +20,7 @@ from keyboards.complexity_menu import complexity_markup
 from messages.cve_output import get_cve_by_id_output_text
 
 router = Router()
+
 
 # TODO верхний регист при вводе CVE
 # TODO версия ПО
@@ -80,7 +83,7 @@ async def add_vendor(message: Message, state: FSMContext):
     await message.answer(
         f"Название вендора успешно установлено. Теперь данные: {user_date}",
         reply_markup=find_cve_markup
-    ) 
+    )
 
 
 @router.callback_query(F.data == "find_cve_name")
@@ -121,14 +124,12 @@ async def adding_start_date(message: Message, state: FSMContext):
     inserted_date = message.text
 
     try:
-        datetime.strptime(inserted_date, "%d.%m.%Y")
+        isoparser.isoparse(inserted_date)
 
         await state.update_data(start_date=inserted_date)
 
     except ValueError as e:
         log.debug(e)
-
-        user_data = await state.get_data()
 
         return await message.answer(
             f"Неправильный формат ввода даты, попробуйте еще раз",
@@ -158,13 +159,13 @@ async def addind_end_date(message: Message, state: FSMContext):
     inserted_date = message.text
 
     try:
-        datetime.strptime(inserted_date, "%d.%m.%Y")
+        isoparser.isoparse(inserted_date)
 
         await state.update_data(end_date=inserted_date)
 
     except ValueError as e:
         log.debug(e)
-            
+
         user_data = await state.get_data()
 
         return await message.answer(
@@ -222,52 +223,69 @@ async def proccess_callback_cve_submit(callback_query: CallbackQuery, state: FSM
     """
         find_cve_menu: Handler for the button submit params of cve and do request for api
     """
-    request_params: Dict[str, str] = await state.get_data()
+    request_params_raw: Dict[str, Any] = await state.get_data()
 
     """
         TODO ТУТ ЗАПРОС ПО ПАРАМЕТРАМ ФОРМАТ ПАРАМЕТРОВ МОЖЕМ ПОДОГНАТЬ ПОД API-ШКУ
         пока просто вывод параметров списком в сообщения
     """
-    print(request_params)
+    log.debug(f'[proccess_callback_cve_submit] request_params_raw={request_params_raw}')
     result_list = []
+
+    # request_params = request_params_raw
+
+    request_params = {}
+    request_params['vendor'] = request_params_raw["vendor"]
+    request_params['product'] = request_params_raw["product"]
+    request_params['date'] = (request_params_raw["start_date"], request_params_raw["end_date"])
+    request_params['cvss_version'] = request_params_raw["cvss_version"]
+    request_params['cvss_param'] = request_params_raw["cvss_param"]
+    request_params['vector'] = request_params_raw["vector"]
+    request_params['complexity'] = request_params_raw["complexity"]
+
     try:
-        # result_list = await aget_cve_by_params(
-        #     vendor=request_params["vendor"],
-        #     product=request_params["product"],
-        #     date=([request_params["start_date"], request_params["end_date"]]),
-        #     cvss_ver=str(request_params["cvss_version"]),
-        #     cvss=list(request_params["cvss_param"]),
-        #     vector=list(request_params["vector"]),
-        #     complexity=list(request_params["complexity"]),
-        #     epss=None,
-        #     qm=None,
-        #     mentions=None
-        # )
-        result_list = await aget_cve_by_params(cvss_ver='2',
-                                   cvss=['LOW'],
-                                   qm=None,
-                                   vector=['NETWORK'],
-                                   complexity=None,
-                                   epss=None,
-                                   date=None,
-                                   product=None,
-                                   vendor=None,
-                                   mentions=None,
-                                   )
-    
+        result_list = await aget_cve_by_params(
+            vendor=request_params['vendor'],
+            product=request_params['product'],
+            date=request_params['date'],
+            cvss_ver=request_params['cvss_version'],
+            cvss=request_params['cvss_param'],
+            vector=request_params['vector'],
+            complexity=request_params['complexity'],
+            epss=None,
+            qm=None,
+            mentions=None
+        )
+        # result_list = await aget_cve_by_params(cvss_ver='2',
+        #                            cvss=['LOW'],
+        #                            qm=None,
+        #                            vector=['NETWORK'],
+        #                            complexity=None,
+        #                            epss=None,
+        #                            date=None,
+        #                            product=None,
+        #                            vendor=None,
+        #                            mentions=None,
+        #                            )
+
     except Exception as e:
         log.warning(f"[cve_submit] {e}")
+        pass
+
+    if len(result_list) > 5:
+        await callback_query.message.answer(
+            text='Найденных CVE слишком много, я выведу только первые пять'
+        )
+
+        # get_cve_by_id_output_text(result_cve)
 
     print(len(result_list))
-    # for cve in result_list:
-    #     await callback_query.message.answer(
-    #         text=get_cve_by_id_output_text(cve)
-    #     )
-    
+    for cve in result_list[:5]:
+        await callback_query.message.answer(
+            text=get_cve_by_id_output_text(cve)
+        )
+
     await callback_query.message.answer(
         text="Меню:",
         reply_markup=main_markup
     )
-    
-
-

@@ -9,6 +9,7 @@ import dateutil.parser as isoparser
 from pytz import timezone
 
 from api.builders.cve_builder import CveTupleBuilder, CveTuple
+from api.nist_api.enums import CvssVerEnum, CvssSeverityV2Enum, CvssSeverityV3Enum, VectorsEnum, ComplexityEnum
 
 from config import config
 
@@ -19,14 +20,15 @@ class ParseDateException(ValueError):
 
 class NistApi:
     VECTORS_ABBR: dict = {
-        'local': 'L',
-        'adjacent network': 'A',
-        'network': 'N'
+        VectorsEnum.LOCAL.value: 'L',
+        VectorsEnum.ADJACENT_NETWORK.value: 'A',
+        VectorsEnum.NETWORK.value: 'N',
     }
+
     COMPLEXITY_ABBR: dict = {
-        'low': 'L',
-        'medium': 'M',
-        'high': 'H'
+        ComplexityEnum.LOW.value: 'L',
+        ComplexityEnum.MEDIUM.value: 'M',
+        ComplexityEnum.HIGH.value: 'H',
     }
 
     def __init__(self,
@@ -119,7 +121,8 @@ class NistApi:
 
         params: dict = self.__prepare_params()
 
-        params_list = self.recursive_queries(list(params.values()))
+        params_values = [*params.values()]
+        params_list = self.recursive_queries(params_values)
 
         if len(params_list) == 0:
             self.__request_url = None
@@ -162,6 +165,9 @@ class NistApi:
 
             pass
         else:
+            if type(params[0]) == list:
+                params = params.pop()
+                pass
             return [params]
         pass
 
@@ -280,11 +286,6 @@ class NistApi:
     def set_severity_param(self, level: List[str]):
         severity_param = [l.upper() for l in level]
         for s in severity_param:
-            # test3 = self
-            # test4 = test3.__severity
-            # test2 = self.VECTORS_ABBR
-            # test1 = self.__severity
-            # test = set(test1)
             assert s in self.__severity, "unknown severity level"
             pass
         # FIXME: понять пончему он не видит данные от наследуемого класса
@@ -293,14 +294,14 @@ class NistApi:
         pass
 
     def set_vector_param(self, vector: List[str]):
-        vector_param = [v.lower() for v in vector]
-        vector_param = [NistApi.VECTORS_ABBR[v] for v in vector_param]
+        # vector_param = [v.lower() for v in vector]
+        vector_param = [NistApi.VECTORS_ABBR[v] for v in vector]
         self.__vector_param = tuple(vector_param)
         pass
 
     def set_complexity_param(self, complexity: List[str]):
-        complexity_param = [v.lower() for v in complexity]
-        complexity_param = [NistApi.COMPLEXITY_ABBR[v] for v in complexity_param]
+        # complexity_param = [v.lower() for v in complexity]
+        complexity_param = [NistApi.COMPLEXITY_ABBR[v] for v in complexity]
         self.__complexities_param = tuple(complexity_param)
         pass
 
@@ -341,5 +342,21 @@ class NistApi:
     def set_mentions_param(self, mentions: Tuple[float, float]):
         self.__mentions_param = tuple(mentions)
         pass
+
+    @staticmethod
+    def factory_method(ver) -> 'NistApi':
+        match ver:
+            case CvssVerEnum.VER2.value:
+                return NistApi('cvssV2Severity',
+                               'cvssV2Metrics',
+                               CvssSeverityV2Enum.get_values())
+            case CvssVerEnum.VER3.value:
+                return NistApi('cvssV3Severity',
+                               'cvssV3Metrics',
+                               CvssSeverityV3Enum.get_values())
+            case _:
+                return NistApi('cvssV3Severity',
+                               'cvssV3Metrics',
+                               CvssSeverityV3Enum.get_values())
 
     pass

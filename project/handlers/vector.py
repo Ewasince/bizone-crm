@@ -3,6 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 
+from api.nist_api.enums import VectorsEnum
 from forms import FindCVEGroup
 
 import logging as log
@@ -19,7 +20,7 @@ async def process_callback_vector_local(callback_query: CallbackQuery, state: FS
         vector_menu: Handler for the button that sets vector parameter to LOCAL
     """
 
-    await state.update_data(vector="LOCAL")
+    await state.update_data(vector=[VectorsEnum.LOCAL.value])
     user_data = await state.get_data()
 
     await callback_query.message.edit_text(
@@ -34,7 +35,7 @@ async def process_callback_vector_adj_network(callback_query: CallbackQuery, sta
         vector_menu: Handler for the button that sets vector parameter to ADJACENT NETWORK
     """
 
-    await state.update_data(vector="ADJACENT NETWORK")
+    await state.update_data(vector=[VectorsEnum.ADJACENT_NETWORK.value])
     user_data = await state.get_data()
 
     await callback_query.message.edit_text(
@@ -49,7 +50,7 @@ async def process_callback_vector_network(callback_query: CallbackQuery, state: 
         vector_menu: Handler for the button that sets vector parameter to NETWORK
     """
 
-    await state.update_data(vector="NETWORK")
+    await state.update_data(vector=[VectorsEnum.NETWORK.value])
     user_data = await state.get_data()
 
     await callback_query.message.edit_text(
