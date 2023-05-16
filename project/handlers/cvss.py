@@ -21,7 +21,7 @@ async def process_callback_add_cvss_v2(callback_query: CallbackQuery, state: FSM
     """
         cvss_menu: Handler for the button that selects version v2
     """
-    await state.update_data(cvss_version="2", cvss_param="")
+    await state.update_data(cvss_version="2", cvss_param=None)
 
     await callback_query.message.edit_text(
         "Выберите значие:",
@@ -34,7 +34,7 @@ async def process_callback_add_cvss_v3(callback_query: CallbackQuery, state: FSM
     """
         cvss_menu: Handler for the button that selects version v3
     """
-    await state.update_data(cvss_version="3", cvss_param="")
+    await state.update_data(cvss_version="3", cvss_param=None)
 
     await callback_query.message.edit_text(
         "Выберите значие:",
@@ -60,7 +60,7 @@ async def process_callback_back_to_cvss(callback_query: CallbackQuery, state: FS
     """
         cvss_menu: Handler for the button that returns to the cvss version selection
     """
-    await state.update_data(cvss_param="")
+    await state.update_data(cvss_param=None)
     await callback_query.message.edit_text(
         "Какую версию CVSS вы хотите использовать",
         reply_markup=find_cve_cvss_markup

@@ -11,6 +11,8 @@ import logging as log
 
 from keyboards.main_menu import main_markup
 
+from messages.cve_output import get_trends_cve_output_text
+
 
 router = Router()
 
@@ -32,7 +34,7 @@ async def procress_callback_most_valuable_day(callback_query: CallbackQuery, sta
     for i in range(len(result)): 
 
         await callback_query.message.answer(
-            text=f"Номер №{i+1}: {result[i]}"
+            text=get_trends_cve_output_text(result[i], i)
         )
 
     await callback_query.message.answer(
@@ -47,6 +49,7 @@ async def procress_callback_most_valuable_week(callback_query: CallbackQuery, st
         valuable_cve: Handler for button that sets the parameter period to week
     """
     period = "7days"
+    result = []
 
     try: 
         result = await aget_trends_cve(period)
@@ -57,7 +60,7 @@ async def procress_callback_most_valuable_week(callback_query: CallbackQuery, st
     for i in range(len(result)): 
 
         await callback_query.message.answer(
-            text=f"Номер №{i+1}: {result[i]}"
+            text=get_trends_cve_output_text(result[i], i)
         )
 
     await callback_query.message.answer(

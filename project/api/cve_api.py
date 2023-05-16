@@ -84,7 +84,7 @@ async def aget_cve_by_params(cvss_ver: str,
 
     if vendor is not None:
         nist_api.set_vendor_param(vendor)
-        pass
+        pass    
 
     if mentions is not None:
         nist_api.set_mentions_param(mentions)

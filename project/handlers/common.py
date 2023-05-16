@@ -43,14 +43,14 @@ async def process_callback_find_cve(callback_query: CallbackQuery, state: FSMCon
         TODO ПОТОМ убрать коммент
     """
     await state.update_data(
-        vendor="",
-        product="",
-        start_date="",
-        end_date="",
-        cvss_version="",
-        cvss_param="",
-        vector="",
-        complexity=""
+        vendor=None,
+        product=None,
+        start_date=None,
+        end_date=None,
+        cvss_version=None,
+        cvss_param=None,
+        vector=None,
+        complexity=None
     )
     user_data = await state.get_data()
 

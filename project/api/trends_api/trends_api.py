@@ -9,6 +9,7 @@ import logging as log
 class TrendsApi:
     def __init__(self) -> None:
         self.url : str
+        self.period : str
 
     async def aexecute_request(self):
 
@@ -25,7 +26,7 @@ class TrendsApi:
 
                 cve_row_list = resp_row_data["data"]
         
-        builder = CveTrendsTupleBuilder()
+        builder = CveTrendsTupleBuilder(self.period)
         builder.build(cve_row_list)
 
         result_tuples = builder.get_result()
@@ -34,6 +35,7 @@ class TrendsApi:
     
     def set_url(self, period: str):
         self.url = f"https://cvetrends.com/api/cves/{period}"
+        self.period = period
 
     
 

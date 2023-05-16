@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from datetime import datetime
 from typing import Dict
 
-from api.cve_api import aget_cve_by_id
+from api.cve_api import aget_cve_by_id, aget_cve_by_params
 from forms import FindCVEGroup
 
 import logging as log
@@ -14,6 +14,8 @@ from keyboards.main_menu import main_markup
 from keyboards.cvss_menu import find_cve_cvss_markup
 from keyboards.vector_menu import vector_markup
 from keyboards.complexity_menu import complexity_markup
+
+from messages.cve_output import get_cve_by_id_output_text
 
 router = Router()
 
@@ -49,29 +51,7 @@ async def adding_id(message: Message, state: FSMContext):
         return
         pass
 
-    await message.answer(f'''
-По данному id найдена информация :
-        
-🔵 Номер CVE <a href='{result_cve.link}'>{result_cve.id}</a>
-🔵 Дата/время регистрации CVE {result_cve.date}
-🔵 Описание CVE {result_cve.description}
-        
-🔵 CVSSv2 {result_cve.cvss2}
-🔵 CVSSv3 {result_cve.cvss3}
-        
-🔵 Уровень критичности {result_cve.score}
-🔵 Вектор атаки {result_cve.vector}
-🔵 Сложность атаки {result_cve.complexity}
-🔵 EPSS рейтинг {result_cve.epss}
-        
-🔵 Продукт/вендор для которого характерна CVE {result_cve.product}
-🔵 Уязвимые версии продукта {result_cve.versions}
-        
-🔵 PoC/CVE WriteUp (С кликабельными ссылками, если есть) {result_cve.poc}
-🔵 Информация о количестве упоминаний {result_cve.mentions}
-🔵 Необходимые действия по устранению уязвимости {result_cve.elimination if result_cve.elimination else 'вовремя обновиться'}
-'''
-                         )
+    await message.answer(get_cve_by_id_output_text(result_cve))
 
     await message.answer(
         f"Меню",
@@ -248,8 +228,44 @@ async def proccess_callback_cve_submit(callback_query: CallbackQuery, state: FSM
         TODO ТУТ ЗАПРОС ПО ПАРАМЕТРАМ ФОРМАТ ПАРАМЕТРОВ МОЖЕМ ПОДОГНАТЬ ПОД API-ШКУ
         пока просто вывод параметров списком в сообщения
     """
+    print(request_params)
+    result_list = []
+    try:
+        # result_list = await aget_cve_by_params(
+        #     vendor=request_params["vendor"],
+        #     product=request_params["product"],
+        #     date=([request_params["start_date"], request_params["end_date"]]),
+        #     cvss_ver=str(request_params["cvss_version"]),
+        #     cvss=list(request_params["cvss_param"]),
+        #     vector=list(request_params["vector"]),
+        #     complexity=list(request_params["complexity"]),
+        #     epss=None,
+        #     qm=None,
+        #     mentions=None
+        # )
+        result_list = await aget_cve_by_params(cvss_ver='2',
+                                   cvss=['LOW'],
+                                   qm=None,
+                                   vector=['NETWORK'],
+                                   complexity=None,
+                                   epss=None,
+                                   date=None,
+                                   product=None,
+                                   vendor=None,
+                                   mentions=None,
+                                   )
+    
+    except Exception as e:
+        log.warning(f"[cve_submit] {e}")
+
+    print(len(result_list))
+    # for cve in result_list:
+    #     await callback_query.message.answer(
+    #         text=get_cve_by_id_output_text(cve)
+    #     )
+    
     await callback_query.message.answer(
-        f"Введенные параметры: {request_params}",
+        text="Меню:",
         reply_markup=main_markup
     )
     
