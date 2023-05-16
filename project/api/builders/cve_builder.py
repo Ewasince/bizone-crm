@@ -8,20 +8,20 @@ from api.nist_api.enums import CvssVerEnum
 @dataclass
 class Cve:
     id: str
-    link: str
-    cvss2: str
-    cvss3: str
-    score: str
-    vector: str
-    complexity: str
-    epss: str
-    date: str
-    product: str
-    versions: str
-    poc: str
-    description: str
-    mentions: str
-    elimination: str
+    link: str | None
+    cvss2: str | None
+    cvss3: str | None
+    score: str | None
+    vector: str | None
+    complexity: str | None
+    epss: str | None
+    date: str | None
+    product: str | None
+    versions: str | None
+    poc: str | None
+    description: str | None
+    mentions: str | None
+    elimination: str | None
 
     @staticmethod
     def get_fields():
