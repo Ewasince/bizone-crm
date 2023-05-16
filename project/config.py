@@ -3,10 +3,10 @@ import os
 from pydantic import BaseModel
 
 
-# from dotenv import load_dotenv
-#
-# load_dotenv("secrets.env")
-# load_dotenv("config.env")
+from dotenv import load_dotenv
+
+load_dotenv("secrets.env")
+load_dotenv("config.env")
 
 # __all__ = ['config']
 
@@ -20,6 +20,7 @@ class Config(BaseModel):
     bot_token: str
     translator_token: str
     translator_folder: str
+    github_token: str
 
     # public config
     bot_name: str
