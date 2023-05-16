@@ -1,18 +1,12 @@
-from aiogram.types import Message, CallbackQuery
-from aiogram import Router, F
-from aiogram.fsm.context import FSMContext
-from api.cve_api import aget_trends_cve
-
-from forms import FindCVEGroup
-
-from config import config
-
 import logging as log
 
+from aiogram import Router, F
+from aiogram.fsm.context import FSMContext
+from aiogram.types import CallbackQuery
+
+from api.api_facade import get_cve_repo
 from keyboards.main_menu import main_markup
-
 from messages.cve_output import get_trends_cve_output_text
-
 
 router = Router()
 
@@ -24,15 +18,16 @@ async def procress_callback_most_valuable_day(callback_query: CallbackQuery, sta
     """
     period = "24hrs"
     result = []
-    
-    try: 
-        result = await aget_trends_cve(period)
+
+    cve_repo = get_cve_repo(None)
+
+    try:
+        result = await cve_repo.a_get_trends_cve(period)
 
     except Exception as e:
         log.warning(f"[valuable_cve] {e}")
 
-    for i in range(len(result)): 
-
+    for i in range(len(result)):
         await callback_query.message.answer(
             text=get_trends_cve_output_text(result[i], i)
         )
@@ -51,14 +46,15 @@ async def procress_callback_most_valuable_week(callback_query: CallbackQuery, st
     period = "7days"
     result = []
 
-    try: 
-        result = await aget_trends_cve(period)
+    cve_repo = get_cve_repo(None)
+
+    try:
+        result = await cve_repo.a_get_trends_cve(period)
 
     except Exception as e:
         log.warning(f"[valuable_cve] {e}")
 
-    for i in range(len(result)): 
-
+    for i in range(len(result)):
         await callback_query.message.answer(
             text=get_trends_cve_output_text(result[i], i)
         )

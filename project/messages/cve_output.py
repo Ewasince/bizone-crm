@@ -1,16 +1,12 @@
-from datetime import datetime
-from typing import List
-
+from api.builders.cve_builder import Cve
 from api.builders.trends_cve_builder import CveTrendsTuple
-from api.builders.cve_builder import CveTuple
 
-# TODO Влад Переименовать poc потому что это не poc-и в выводе Api
 
-def get_cve_by_id_output_text(result_cve: CveTuple) -> str:
+def get_cve_by_id_output_text(result_cve: Cve) -> str:
     additional_sources = ""
     products_vith_version = ""
 
-    for link in result_cve.poc.split():
+    for link in result_cve.mentions.split():
         additional_sources += f"""
     <a href='{link}'>Дополнительный источник</a>"""
         

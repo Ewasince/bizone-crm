@@ -1,16 +1,8 @@
-from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from datetime import datetime
+from aiogram.types import CallbackQuery
 
 from api.nist_api.enums import CvssVerEnum, CvssSeverityV2Enum, CvssSeverityV3Enum
-from forms import FindCVEGroup
-
-from config import config
-
-import logging as log
-
 from keyboards.cvss_menu import find_cve_cvss_markup, cvss_v2_markup, cvss_v3_markup
 from keyboards.params_searching_cve_menu import find_cve_markup
 

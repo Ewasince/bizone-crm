@@ -1,31 +1,36 @@
-import logging as log
 # import seaborn as sb
 # import matplotlib.pyplot as plt
 # import numpy as np
 
-from collections import namedtuple
-from typing import List, Optional, Dict
+from dataclasses import dataclass, fields
+from typing import List, Optional
 
 
-trend_tuple_fields = [
-    "id",
-    "cve_link",
-    "audience_size",
-    "num_tweets",
-    "num_retweets",
-    "num_tweets_and_retweets",
-    "published_date",
-    "cvss_v2_base_score",
-    "cvss_v3_base_score",
-    "cvss_v2_base_severity",
-    "cvss_v3_base_severity",
-    "description",
-    "epss_score",
-    "nums_reddit_posts",
-    "graph_pict",
-    "vendor_advisories", 
-]
-CveTrendsTuple = namedtuple('CveTrendsTuple', trend_tuple_fields)
+@dataclass
+class CveTrendsTuple:
+    id: str
+    cve_link: str
+    audience_size: str
+    num_tweets: str
+    num_retweets: str
+    num_tweets_and_retweets: str
+    published_date: str
+    cvss_v2_base_score: str
+    cvss_v3_base_score: str
+    cvss_v2_base_severity: str
+    cvss_v3_base_severity: str
+    description: str
+    epss_score: str
+    nums_reddit_posts: str
+    graph_pict: str
+    vendor_advisories: str
+
+    @staticmethod
+    def get_fields():
+        return [f.name for f in fields(CveTrendsTuple)]
+
+    pass
+
 
 class CveTrendsTupleBuilder:
 
@@ -34,17 +39,13 @@ class CveTrendsTupleBuilder:
         self.__result_dict: dict
         self.__period = period
         self.reset()
-        
 
     def reset(self):
-        self.__result_dict = {k: None for k in trend_tuple_fields}
+        self.__result_dict = {k: None for k in CveTrendsTuple.get_fields()}
         self.__resul_cves = []
-        
 
     def build(self, raw_data):
-        
         for cve_data in raw_data:
-
             self.__result_dict["id"] = cve_data["cve"]
             self.__result_dict["cve_link"] = f"https://nvd.nist.gov/vuln/detail/{cve_data['cve'].upper()}"
             self.__result_dict["audience_size"] = cve_data["audience_size"]
@@ -65,12 +66,11 @@ class CveTrendsTupleBuilder:
 
             self.__resul_cves.append(CveTrendsTuple(**self.__result_dict))
 
-
     def get_result(self) -> List[CveTrendsTuple]:
         return self.__resul_cves
-    
+
     # def generate_graph(self, raw_data: List[Dict]):
-        
+
     #     audience = [] # ()
     #     posts = [] # (tweets, retweets)
 
@@ -78,7 +78,7 @@ class CveTrendsTupleBuilder:
     #         audience.append(item["audience"])
 
     #         posts.append((item["tweets"], item["retweets"]))
-        
+
     #     log.info(audience)
     #     log.info(posts)
 
@@ -88,7 +88,4 @@ class CveTrendsTupleBuilder:
     #         plt.plot(x,  posts)
     #     plt.show()
 
-# test 
-
-        
-
+# test

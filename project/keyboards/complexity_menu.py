@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from keyboards.cvss_menu import inline_btn_back_cve_menu
 
+from keyboards.cvss_menu import inline_btn_back_cve_menu
 
 # Buttons
 inline_btn_complexity_low = InlineKeyboardButton(

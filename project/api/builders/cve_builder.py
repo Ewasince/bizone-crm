@@ -1,48 +1,52 @@
 import logging as log
-from collections import namedtuple
+from dataclasses import dataclass, fields
 from typing import Optional, List
 
 from api.nist_api.enums import CvssVerEnum
 
-cve_tuple_fields = ['id',  # cve id
-                    'link',  # ссылка на CVE
-                    'cvss2',  # CVSS 2 рейтинг 
-                    'cvss3',  # CVSS 3.1 рейтинг
-                    'score',  # Уровень критичности
-                    'vector',  # Уровень критичности
-                    'complexity',  # Уровень критичности
-                    'epss',  # EPSS рейтинг
-                    'date',  # Дата/время регистрации CVE
-                    'product',  # Продукт/вендор для которого характерна CVE
-                    'versions',  # Уязвимые версии продукта
-                    'poc',  # PoC/CVE WriteUp (С кликабельными ссылками, если есть) ЭТО НЕ ПОКИ думаю Переименновать в полезные ссылки
-                    'description',  # Описание CVE
-                    'mentions',  # Информация о количестве упоминаний о CVE УБРАТЬ 
-                    'elimination']  # Необходимые действия по устранению уязвимости
 
-CveTuple = namedtuple('CveTuple', cve_tuple_fields)
+@dataclass
+class Cve:
+    id: str
+    link: str
+    cvss2: str
+    cvss3: str
+    score: str
+    vector: str
+    complexity: str
+    epss: str
+    date: str
+    product: str
+    versions: str
+    poc: str
+    description: str
+    mentions: str
+    elimination: str
+
+    @staticmethod
+    def get_fields():
+        return [f.name for f in fields(Cve)]
+    pass
 
 
 class CveTupleBuilder:
 
     def __init__(self):
-        self.__resul_cves: Optional[List[CveTuple]] = []
-        self.__result_dict: dict
+        self.__resul_cves: Optional[List[Cve]] = []
+        self.__result_dict: dict = {}
         self.reset()
         pass
 
     def reset(self):
-        self.__result_dict = {k: None for k in cve_tuple_fields}
+        self.__result_dict = {k: None for k in Cve.get_fields()}
         self.__resul_cves = []
         pass
 
-    def build(self, cve_all_data, epss_data, mentions):
+    def build(self, cve_all_data):
         for vulnerability in cve_all_data['vulnerabilities']:
 
             cve_data = vulnerability['cve']
             self.__get_data_from_cve_data(cve_data)
-
-            self.__result_dict['epss'] = self.parse_epss(epss_data)
 
             metrics = cve_data['metrics']
             self.__get_data_from_cve_metrics(metrics)
@@ -58,11 +62,11 @@ class CveTupleBuilder:
             descriptions = cve_data['descriptions']
             self.__get_data_from_cve_description(descriptions)
 
-            self.__result_dict['poc'] = mentions
-
+            self.__result_dict['poc'] = None
+            self.__result_dict['epss'] = None
             self.__result_dict['elimination'] = None
 
-            self.__resul_cves.append(CveTuple(**self.__result_dict))
+            self.__resul_cves.append(Cve(**self.__result_dict))
             pass
 
         pass
@@ -222,13 +226,9 @@ class CveTupleBuilder:
             pass
         pass
 
-    def parse_epss(self, epss_data) -> str:
-        log.warning(f'[CveTupleBuilder] [parse_epss] not implemented yet!')
-        return None
-
     def find_mentions(self, cve_id: str) -> str:
         log.warning(f'[CveTupleBuilder] [find_mentions] not implemented yet!')
         return None
 
-    def get_result(self) -> List[CveTuple]:
+    def get_result(self) -> List[Cve]:
         return self.__resul_cves

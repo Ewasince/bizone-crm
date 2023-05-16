@@ -1,4 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 from keyboards.cvss_menu import inline_btn_back_cve_menu
 
 # Adjacent Network (AV:A)

@@ -8,9 +8,8 @@ import aiohttp
 import dateutil.parser as isoparser
 from pytz import timezone
 
-from api.builders.cve_builder import CveTupleBuilder, CveTuple
+from api.builders.cve_builder import CveTupleBuilder, Cve
 from api.nist_api.enums import CvssVerEnum, CvssSeverityV2Enum, CvssSeverityV3Enum, VectorsEnum, ComplexityEnum
-
 from config import config
 
 
@@ -71,7 +70,7 @@ class NistApi:
         # self.__params = {}
         pass
 
-    async def aexecute_request(self) -> List[CveTuple]:
+    async def a_execute_request(self) -> List[Cve]:
         self.__build_url()
         assert self.__request_url is not None, "No parameters passed to request url"
 
@@ -83,18 +82,12 @@ class NistApi:
 
                     if resp.status != 200:
                         log.warning(
-                            f"[aexecute_request] cannot get url={self.__request_url}, status_code={resp.status}")
+                            f"[a_execute_request] cannot get url={self.__request_url}, status_code={resp.status}")
                         raise Exception('Response error')
 
                     cve_data_raw = await resp.text()
 
                     cve_datas_raw.append(cve_data_raw)
-
-                    # epss_data = None  # TODO: добавить апи на запрос epss
-                    # mentions = None  # TODO: добавить реп на упоминания
-
-                    # FIXME: проверить как будет рабоатть на множетсвенной выдече cve
-
                     pass
             pass
 
@@ -104,11 +97,13 @@ class NistApi:
             cve_all_data = json.loads(cve_data_raw)
 
             cve_builder = CveTupleBuilder()
-            cve_builder.build(cve_all_data, None, None)
+            cve_builder.build(cve_all_data)
 
             cves = cve_builder.get_result()
             result_cves.extend(cves)
             pass
+
+        # epss_data = None  # TODO: добавить апи на запрос epss
 
         return result_cves
 

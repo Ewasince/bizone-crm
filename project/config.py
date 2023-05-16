@@ -2,6 +2,7 @@ import os
 
 from pydantic import BaseModel
 
+
 # from dotenv import load_dotenv
 #
 # load_dotenv("secrets.env")
@@ -28,6 +29,10 @@ class Config(BaseModel):
 
     cve_api: str
     cve_api_version: str
+
+    max_cve_output: int
+
+    translate_descriptions: bool
 
     # делаем конфиг неизменяемым
     class Config:

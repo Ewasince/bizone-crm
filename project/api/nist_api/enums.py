@@ -1,7 +1,5 @@
 from enum import Enum
 
-from aiohttp.web_routedef import static
-
 
 class CvssVerEnum(Enum):
     VER2 = '2'

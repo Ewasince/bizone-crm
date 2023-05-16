@@ -1,7 +1,7 @@
 import asyncio
 import json
-from typing import List
 import logging as log
+from typing import List
 
 from aiogram.client.session import aiohttp
 
@@ -16,7 +16,7 @@ class TranslatorApi:
     __source_language = 'en'
     __url = 'https://translate.api.cloud.yandex.net/translate/v2/translate'
 
-    async def atranslate(self, texts: List[str]) -> List[str]:
+    async def a_translate(self, texts: List[str]) -> List[str]:
         body = {
             "targetLanguageCode": TranslatorApi.__target_language,
             "sourceLanguageCode": TranslatorApi.__source_language,
@@ -36,7 +36,7 @@ class TranslatorApi:
 
                 if resp.status != 200:
                     log.warning(
-                        f"[aexecute_request] cannot get json={body}, headers={headers}, status_code={resp.status}")
+                        f"[a_execute_request] cannot get json={body}, headers={headers}, status_code={resp.status}")
                     raise Exception('Response error')
 
                 response_text = await resp.text()
@@ -61,4 +61,4 @@ class TranslatorApi:
 if __name__ == '__main__':
     translator = TranslatorApi()
 
-    asyncio.run(translator.atranslate(['hellow, world!']))
+    asyncio.run(translator.a_translate(['hellow, world!', 'Hi everyone!']))

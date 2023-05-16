@@ -1,17 +1,17 @@
 from unittest import TestCase
 
-from api.builders.cve_builder import CveTupleBuilder, cve_tuple_fields, CveTuple
-from test_support import sample_cve_all_data_1, sample_epss_data_1, sample_mentions_1, sample_cve_dict_1
+from api.builders.cve_builder import CveTupleBuilder, Cve
+from test_support import sample_cve_all_data_1, sample_cve_dict_1
 
 
 class TestCveTupleBuilder(TestCase):
 
     def setUp(self) -> None:
-        self.empy_cve_dict = {k: None for k in cve_tuple_fields}
-        self.empty_cve = CveTuple(**self.empy_cve_dict)
+        self.empy_cve_dict = {k: None for k in Cve.get_fields()}
+        self.empty_cve = Cve(**self.empy_cve_dict)
 
         self.cve_tuple_dict = sample_cve_dict_1
-        self.cve_tuple = CveTuple(**self.cve_tuple_dict)
+        self.cve_tuple = Cve(**self.cve_tuple_dict)
 
         self.cve_all_data = sample_cve_all_data_1
 
@@ -38,7 +38,7 @@ class TestCveTupleBuilder(TestCase):
 
     def test_build(self):
         # prepare
-        self.cve_builder.build(self.cve_all_data, sample_epss_data_1, sample_mentions_1)
+        self.cve_builder.build(self.cve_all_data)
 
         # assert
         expected = [self.cve_tuple]

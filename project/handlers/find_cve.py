@@ -1,22 +1,19 @@
-from aiogram.types import Message, CallbackQuery
-from aiogram import Router, F
-from aiogram.fsm.context import FSMContext
-from datetime import datetime
+import logging as log
 from typing import Dict, Any
 
 import dateutil.parser as isoparser
+from aiogram import Router, F
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message, CallbackQuery
 
-from api.cve_api import aget_cve_by_id, aget_cve_by_params
+from api.api_facade import get_cve_repo
+from config import config
 from forms import FindCVEGroup
-
-import logging as log
-
-from keyboards.params_searching_cve_menu import find_cve_markup
-from keyboards.main_menu import main_markup
-from keyboards.cvss_menu import find_cve_cvss_markup
-from keyboards.vector_menu import vector_markup
 from keyboards.complexity_menu import complexity_markup
-
+from keyboards.cvss_menu import find_cve_cvss_markup
+from keyboards.main_menu import main_markup
+from keyboards.params_searching_cve_menu import find_cve_markup
+from keyboards.vector_menu import vector_markup
 from messages.cve_output import get_cve_by_id_output_text
 
 router = Router()
@@ -39,9 +36,11 @@ async def adding_id(message: Message, state: FSMContext):
     #         reply_markup=main_markup
     #     )
 
+    cve_repo = get_cve_repo(None)
+
     try:
 
-        result_cve_list = await aget_cve_by_id(inserted_id)
+        result_cve_list = await cve_repo.a_get_cve_by_id(inserted_id)
 
         if len(result_cve_list) != 1:
             raise Exception("Wrong number of cve!")
@@ -219,17 +218,14 @@ async def process_callback_add_cvss(callback_query: CallbackQuery, state: FSMCon
 
 
 @router.callback_query(F.data == "find_cve_submit")
-async def proccess_callback_cve_submit(callback_query: CallbackQuery, state: FSMContext):
+async def process_callback_cve_submit(callback_query: CallbackQuery, state: FSMContext):
     """
         find_cve_menu: Handler for the button submit params of cve and do request for api
     """
     request_params_raw: Dict[str, Any] = await state.get_data()
 
-    """
-        TODO ТУТ ЗАПРОС ПО ПАРАМЕТРАМ ФОРМАТ ПАРАМЕТРОВ МОЖЕМ ПОДОГНАТЬ ПОД API-ШКУ
-        пока просто вывод параметров списком в сообщения
-    """
-    log.debug(f'[proccess_callback_cve_submit] request_params_raw={request_params_raw}')
+    log.debug(f'[process_callback_cve_submit] request_params_raw={request_params_raw}')
+
     result_list = []
 
     # request_params = request_params_raw
@@ -243,12 +239,13 @@ async def proccess_callback_cve_submit(callback_query: CallbackQuery, state: FSM
     request_params['vector'] = request_params_raw["vector"]
     request_params['complexity'] = request_params_raw["complexity"]
 
+    cve_repo = get_cve_repo(request_params['cvss_version'])
+
     try:
-        result_list = await aget_cve_by_params(
+        result_list = await cve_repo.a_get_cve_by_params(
             vendor=request_params['vendor'],
             product=request_params['product'],
             date=request_params['date'],
-            cvss_ver=request_params['cvss_version'],
             cvss=request_params['cvss_param'],
             vector=request_params['vector'],
             complexity=request_params['complexity'],
@@ -256,23 +253,11 @@ async def proccess_callback_cve_submit(callback_query: CallbackQuery, state: FSM
             qm=None,
             mentions=None
         )
-        # result_list = await aget_cve_by_params(cvss_ver='2',
-        #                            cvss=['LOW'],
-        #                            qm=None,
-        #                            vector=['NETWORK'],
-        #                            complexity=None,
-        #                            epss=None,
-        #                            date=None,
-        #                            product=None,
-        #                            vendor=None,
-        #                            mentions=None,
-        #                            )
-
     except Exception as e:
         log.warning(f"[cve_submit] {e}")
         pass
 
-    if len(result_list) > 5:
+    if len(result_list) > config.max_cve_output:
         await callback_query.message.answer(
             text='Найденных CVE слишком много, я выведу только первые пять'
         )
@@ -280,7 +265,7 @@ async def proccess_callback_cve_submit(callback_query: CallbackQuery, state: FSM
         # get_cve_by_id_output_text(result_cve)
 
     print(len(result_list))
-    for cve in result_list[:5]:
+    for cve in result_list[:config.max_cve_output]:
         await callback_query.message.answer(
             text=get_cve_by_id_output_text(cve)
         )
