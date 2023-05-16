@@ -304,7 +304,7 @@ class NistApi:
         self.__epss_param = tuple(epss)
         pass
 
-    def set_date_param(self, date: (str, str)):
+    def set_date_param(self, date: Tuple[str, str]):
         # TODO: тут может быть ваш парсер
 
         start_date_str = date[0]

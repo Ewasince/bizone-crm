@@ -3,6 +3,7 @@ import asyncio
 from api.builders.cve_builder import Cve
 from api.yandex_api.translator_api import TranslatorApi
 from config import config
+from typing import List
 
 
 class TranslateBuilder:
@@ -11,12 +12,12 @@ class TranslateBuilder:
         self.__translator: TranslatorApi = TranslatorApi()
         pass
 
-    async def a_bunch_translate(self, cve_list: [Cve], only_firs: bool = True):
+    async def a_bunch_translate(self, cve_list: List[Cve], only_first: bool = True):
         descriptions = [cve.description for cve in cve_list]
 
         texts_to_translate = descriptions
 
-        if only_firs and len(descriptions) > config.max_cve_output:
+        if only_first and len(descriptions) > config.max_cve_output:
             texts_to_translate = descriptions[:5]
             pass
 

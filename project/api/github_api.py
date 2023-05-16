@@ -1,13 +1,17 @@
 from github import Github
-
-api_token = "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"
-
-g = Github(api_token)
-
-repos = g.search_repositories("CVE-2017-0144")
-
-for rep  in repos: 
-    print(rep)
+from typing import List
+from config import config
 
 
+def get_poc_from_github(cve_id: str) -> List[str]:
+    g = Github(config.github_token)
+
+    result_repos = g.search_repositories(cve_id)
+
+    for rep  in result_repos: 
+        print(rep.html_url)
+
+
+# if __name__ == "__main__":
+#     print(get_poc_from_github("CVE-2017-0144"))
 
