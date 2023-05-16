@@ -37,11 +37,6 @@ class CveTupleBuilder:
         pass
 
     def build(self, cve_all_data, epss_data, mentions):
-        # self.__get_data_from_cve_all_data(cve_all_data)
-
-        # len_vulnerabilities = len(cve_all_data['vulnerabilities'])
-        # assert len_vulnerabilities == 1, f'Invalid count of vulnerabilities, len={len_vulnerabilities}'
-
         for vulnerability in cve_all_data['vulnerabilities']:
 
             cve_data = vulnerability['cve']
@@ -63,7 +58,7 @@ class CveTupleBuilder:
             descriptions = cve_data['descriptions']
             self.__get_data_from_cve_description(descriptions)
 
-            self.__result_dict['mentions'] = mentions
+            self.__result_dict['poc'] = mentions
 
             self.__result_dict['elimination'] = None
 
@@ -209,7 +204,7 @@ class CveTupleBuilder:
             references_urls.append(url)
             pass
 
-        self.__result_dict['poc'] = '\n'.join(references_urls)
+        self.__result_dict['mentions'] = '\n'.join(references_urls)
         pass
 
     def __get_data_from_cve_description(self, descriptions) -> None:
