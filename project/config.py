@@ -17,6 +17,8 @@ class Config(BaseModel):
 
     # secrets
     bot_token: str
+    translator_token: str
+    translator_folder: str
 
     # public config
     bot_name: str
