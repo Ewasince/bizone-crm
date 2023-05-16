@@ -33,6 +33,7 @@ class Config(BaseModel):
     max_cve_output: int
 
     translate_descriptions: bool
+    add_epss: bool
 
     # делаем конфиг неизменяемым
     class Config:

@@ -7,8 +7,8 @@ from config import config
 
 class TranslateBuilder:
 
-    def __init__(self):
-        self.__translator: TranslatorApi = TranslatorApi()
+    def __init__(self, translate_api: TranslatorApi):
+        self.__translator: TranslatorApi = translate_api
         pass
 
     async def a_bunch_translate(self, cve_list: [Cve], only_firs: bool = True):

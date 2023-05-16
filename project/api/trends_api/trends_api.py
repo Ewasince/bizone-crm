@@ -21,6 +21,8 @@ class TrendsApi:
 
         async with aiohttp.ClientSession() as session:
             async with session.get(self.__url) as resp:
+                log.debug(
+                    f"[TrendsApi] [a_execute_request] url request, url={self.__url}")
                 if resp.status != 200:
                     log.warning(
                         f"[TrendsApi] [a_execute_request] cannot get url={self.__url}, status_code={resp.status}")
