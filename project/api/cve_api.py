@@ -23,7 +23,7 @@ async def aget_cve_by_id(cve_id: str) -> List[CveTuple]:
     pass
 
 
-async def aget_cve_by_params(cvss_ver: str,
+async def aget_cve_by_params(cvss_ver: Optional[str],
                              cvss: Optional[List[str]],
                              qm: Optional[None],
                              vector: Optional[List[str]],
