@@ -8,7 +8,7 @@ import aiohttp
 import dateutil.parser as isoparser
 from pytz import timezone
 
-from api.cve_builder.cve_builder import CveTupleBuilder, CveTuple
+from api.builders.cve_builder import CveTupleBuilder, CveTuple
 
 from config import config
 
@@ -69,7 +69,7 @@ class NistApi:
         # self.__params = {}
         pass
 
-    async def aexecute_request(self) -> [CveTuple]:
+    async def aexecute_request(self) -> List[CveTuple]:
         self.__build_url()
         assert self.__request_url is not None, "No parameters passed to request url"
 

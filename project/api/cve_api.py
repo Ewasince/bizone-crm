@@ -3,16 +3,18 @@ from typing import Optional, List, Tuple
 from datetime import datetime
 
 from api.nist_api.nist_api import NistApi
-from api.cve_builder.cve_builder import CveTuple
+from api.builders.cve_builder import CveTuple
+from api.builders.trends_cve_builder import CveTrendsTuple
 from api.nist_api.nist_api_factory import NistApiFactory
+from api.trends_api.trends_api import TrendsApi
 
 
-async def aget_cve_by_id(cve_id: str) -> [CveTuple]:
+async def aget_cve_by_id(cve_id: str) -> List[CveTuple]:
     """
     returns a list of CveTuple by passed cve id
     """
 
-    nist_api = NistApi()
+    nist_api = NistApi(None, None, None)
 
     nist_api.set_id_param(cve_id)
     cve = await nist_api.aexecute_request()
@@ -32,7 +34,7 @@ async def aget_cve_by_params(cvss_ver: str,
                              product: Optional[str],
                              vendor: Optional[str],
                              mentions: Optional[Tuple[float, float]]
-                             ) -> [CveTuple]:
+                             ) -> List[CveTuple]:
     """
     Принимает на вход критерии поиска и выдаёт cve по этим критериям. Если вместо критерия передано None, критерий
     при поиске не учитывается
@@ -93,6 +95,19 @@ async def aget_cve_by_params(cvss_ver: str,
     return result
 
 
+async def aget_trends_cve(period: str):
+    """
+        Getting the most popular cve
+    """
+
+    api = TrendsApi()
+    api.set_url(period)
+
+    cve_list: List[CveTrendsTuple] = await api.aexecute_request()
+
+    return cve_list
+
+
 async def test_aget_cve_by_id():
     test_cve_id = 'CVE-2019-1010218'
 
@@ -119,6 +134,11 @@ async def test_aget_cve_by_params():
 
     print(res)
     pass
+
+
+async def test_aget_trends_cve():
+    res = await aget_trends_cve()
+    print(res)
 
 
 if __name__ == '__main__':

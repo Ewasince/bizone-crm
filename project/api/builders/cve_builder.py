@@ -6,7 +6,7 @@ from api.nist_api.cvss_enum import CvssVerEnum
 
 cve_tuple_fields = ['id',  # cve id
                     'link',  # ссылка на CVE
-                    'cvss2',  # CVSS 2 рейтинг
+                    'cvss2',  # CVSS 2 рейтинг 
                     'cvss3',  # CVSS 3.1 рейтинг
                     'score',  # Уровень критичности
                     'vector',  # Уровень критичности
@@ -15,10 +15,11 @@ cve_tuple_fields = ['id',  # cve id
                     'date',  # Дата/время регистрации CVE
                     'product',  # Продукт/вендор для которого характерна CVE
                     'versions',  # Уязвимые версии продукта
-                    'poc',  # PoC/CVE WriteUp (С кликабельными ссылками, если есть)
+                    'poc',  # PoC/CVE WriteUp (С кликабельными ссылками, если есть) ЭТО НЕ ПОКИ думаю Переименновать в полезные ссылки
                     'description',  # Описание CVE
-                    'mentions',  # Информация о количестве упоминаний о CVE
+                    'mentions',  # Информация о количестве упоминаний о CVE УБРАТЬ 
                     'elimination']  # Необходимые действия по устранению уязвимости
+
 CveTuple = namedtuple('CveTuple', cve_tuple_fields)
 
 

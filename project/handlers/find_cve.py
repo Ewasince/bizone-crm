@@ -184,7 +184,7 @@ async def addind_end_date(message: Message, state: FSMContext):
 
     except ValueError as e:
         log.debug(e)
-
+            
         user_data = await state.get_data()
 
         return await message.answer(

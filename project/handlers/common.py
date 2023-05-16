@@ -8,6 +8,7 @@ from config import config
 
 from keyboards.main_menu import main_markup, greetings_markup
 from keyboards.params_searching_cve_menu import find_cve_markup
+from keyboards.valyable_cve_menu import most_valuable_cve_markup
 
 router = Router()
 
@@ -63,3 +64,14 @@ async def process_callback_add_id(callback_query: CallbackQuery, state: FSMConte
     """
     await callback_query.message.edit_text("Введите Id")
     await state.set_state(FindCVEGroup.id)
+
+
+@router.callback_query(F.data == "valuable_cve")
+async def process_callback_valuable_cve(callback_query: CallbackQuery, state: FSMContext):
+    """
+        valuable_cve menu handler
+    """
+    await callback_query.message.edit_text(
+        "Выберите период, за который велась статистика популярности cve",
+        reply_markup=most_valuable_cve_markup
+    )
