@@ -2,30 +2,33 @@ import logging as log
 from dataclasses import dataclass, fields
 from typing import Optional, List
 
-from api.nist_api.enums import CvssVerEnum
+from api.nist_api.enums import CvssVerEnum, VectorsEnumPresent, ComplexityEnum, CvssSeverityV2Enum, CvssSeverityV3Enum
 
 
 @dataclass
 class Cve:
     id: str
-    link: str | None
-    cvss2: str | None
-    cvss3: str | None
-    score: str | None
-    vector: str | None
-    complexity: str | None
-    epss: str | None
-    date: str | None
-    product: str | None
-    versions: str | None
-    poc: str | None
-    description: str | None
-    mentions: str | None
-    elimination: str | None
+    link: Optional[str]
+    vector: Optional[str]
+    complexity: Optional[str]
+    epss: Optional[str]
+    date: Optional[str]
+    product: Optional[str]
+    versions: Optional[str]
+    poc: Optional[str]
+    description: Optional[str]
+    mentions: Optional[str]
+    elimination: Optional[str]
+
+    cvss2: Optional[str] = None
+    cvss3: Optional[str] = None
+    score_v2: Optional[str] = None
+    score_v3: Optional[str] = None
 
     @staticmethod
     def get_fields():
         return [f.name for f in fields(Cve)]
+
     pass
 
 
@@ -83,10 +86,28 @@ class CveTupleBuilder:
         self.__result_dict['link'] = f'https://nvd.nist.gov/vuln/detail/{cve_id.upper()}'
         pass
 
+    def __set_vector(self, vector):
+        self.__result_dict['vector'] = vector
+        pass
+
+    def __set_complexity(self, complexity):
+        self.__result_dict['complexity'] = complexity
+        pass
+
     def __get_data_from_cve_metrics(self, metrics) -> None:
         if len(metrics) == 0:
             return
 
+        if 'cvssMetricV2' in metrics:
+            self.__get_cvss_from_cvss_metrics(metrics, '2')
+            pass
+        if 'cvssMetricV30' in metrics:
+            self.__get_cvss_from_cvss_metrics(metrics, '3')
+            pass
+        if 'cvssMetricV31' in metrics:
+            self.__get_cvss_from_cvss_metrics(metrics, '31')
+
+        # выбираем по какому cvss будем показывать метрики
         if 'cvssMetricV2' in metrics:
             metric_cvss = metrics['cvssMetricV2'][0]
         elif 'cvssMetricV30' in metrics:
@@ -94,85 +115,91 @@ class CveTupleBuilder:
         elif 'cvssMetricV31' in metrics:
             metric_cvss = metrics['cvssMetricV31'][0]
         else:
-            raise
+            raise Exception('Invalid cvss ver')
         cvss_data = metric_cvss['cvssData']
 
-        self.__result_dict['score'] = cvss_data['baseScore']
-
+        # устанавливаем вектор атаки
         if 'accessVector' in cvss_data:
-            self.__result_dict['vector'] = cvss_data['accessVector']
+            vector = cvss_data['accessVector']
+            self.__set_vector(vector)
         elif 'attackVector' in cvss_data:
-            self.__result_dict['vector'] = cvss_data['attackVector']
+            vector = cvss_data['attackVector']
+            self.__set_vector(vector)
             pass
 
+        # устанавливаем сложность
         if 'accessComplexity' in cvss_data:
-            self.__result_dict['complexity'] = cvss_data['accessComplexity']
+            complexity = cvss_data['accessComplexity']
+            self.__set_complexity(complexity)
         elif 'attackComplexity' in cvss_data:
-            self.__result_dict['complexity'] = cvss_data['attackComplexity']
-            pass
-        pass
-
-        score = float(self.__result_dict['score'])
-
-        if 'cvssMetricV2' in metrics:
-            self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV2'], CvssVerEnum.VER2.value, score)
-            pass
-
-        if 'cvssMetricV30' in metrics:
-            self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV30'], CvssVerEnum.VER3.value, score)
-            pass
-        elif 'cvssMetricV31' in metrics:
-            self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV31'], CvssVerEnum.VER31.value, score)
+            complexity = cvss_data['attackComplexity']
+            self.__set_complexity(complexity)
             pass
 
         pass
 
-    def __get_cvss_from_cvss_metrics(self, metrics_list, version: str, score: float) -> None:
-        cvss_metrics = metrics_list[0]
-        cvss_data = cvss_metrics['cvssData']
-        if 'baseSeverity' in cvss_data:
-            base_severity = cvss_data['baseSeverity']
-            pass
-        else:
-            match version:
-                case CvssVerEnum.VER2.value:
-                    base_severity = self.__get_severity_v2(score)
-                case CvssVerEnum.VER3.value:
-                    base_severity = self.__get_severity_v3(score)
-                case _:
-                    base_severity = self.__get_severity_v3(score)
-            pass
+        # if 'cvssMetricV2' in metrics:
+        #     pass
+        # 
+        # if 'cvssMetricV30' in metrics:
+        #     self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV30'], CvssVerEnum.VER3.value, score)
+        #     pass
+        # 
+        # elif 'cvssMetricV31' in metrics:
+        #     self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV31'], CvssVerEnum.VER31.value, score)
+        #     pass
 
-        # save cvss severity
-        match version:
-            case CvssVerEnum.VER2.value:
-                self.__result_dict['cvss2'] = base_severity
-                pass
-            case CvssVerEnum.VER3.value:
-                self.__result_dict['cvss3'] = base_severity
-                pass
+        pass
+
+    def __get_cvss_from_cvss_metrics(self, metrics, ver: str) -> None:
+        match ver:
+            case '2':
+                metrics_name = 'cvssMetricV2'
+                score_name = 'score_v2'
+                cvss_name = 'cvss2'
+                score_func = self.__get_severity_v2
+            case '3':
+                metrics_name = 'cvssMetricV30'
+                score_name = 'score_v3'
+                cvss_name = 'cvss3'
+                score_func = self.__get_severity_v2
+            case '31':
+                metrics_name = 'cvssMetricV31'
+                score_name = 'score_v3'
+                cvss_name = 'cvss3'
+                score_func = self.__get_severity_v2
             case _:
-                self.__result_dict['cvss3'] = base_severity
-                pass
+                raise Exception('Wrong ver name')
+
+        metric_cvss = metrics[metrics_name][0]
+        cvss_data = metric_cvss['cvssData']
+            
+        # устанавливаем оценку опасности
+        score = cvss_data['baseScore']
+                
+        self.__result_dict[score_name] = score
+
+        base_severity = score_func(float(score))
+        self.__result_dict[cvss_name] = base_severity
         pass
 
     def __get_severity_v2(self, score) -> str:
         if score < 4.0:
-            return 'LOW'
+            return CvssSeverityV2Enum.LOW.value
         elif 4.0 <= score < 7.0:
-            return 'MEDIUM'
+            return CvssSeverityV2Enum.MEDIUM.value
         elif 7.0 <= score:
-            return 'HIGH'
+            return CvssSeverityV2Enum.HIGH.value
 
     def __get_severity_v3(self, score) -> str:
         if score < 4.0:
-            return 'LOW'
+            return CvssSeverityV3Enum.LOW.value
         elif 4.0 <= score < 7.0:
-            return 'MEDIUM'
+            return CvssSeverityV3Enum.MEDIUM.value
         elif 7.0 <= score < 9.0:
-            return 'HIGH'
+            return CvssSeverityV3Enum.HIGH.value
         elif 9.0 <= score:
-            return 'CRITICAL'
+            return CvssSeverityV3Enum.CRITICAL.value
 
     def __get_data_from_cve_configurations(self, configurations) -> None:
         products_names = []
@@ -188,7 +215,7 @@ class CveTupleBuilder:
                     criteria = product['criteria'].split(':')
                     product_name = criteria[4]
                     if 'versionEndIncluding' in product:
-                        product_version = 'меньше, чем ' + product['versionEndIncluding']
+                        product_version = 'до ' + product['versionEndIncluding']
                     else:
                         product_version = criteria[5]
                         pass
@@ -208,7 +235,7 @@ class CveTupleBuilder:
             references_urls.append(url)
             pass
 
-        self.__result_dict['mentions'] = '\n'.join(references_urls)
+        self.__result_dict['mentions'] = references_urls
         pass
 
     def __get_data_from_cve_description(self, descriptions) -> None:

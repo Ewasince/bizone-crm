@@ -35,15 +35,28 @@ class CvssSeverityV3Enum(GetValuesEnum, Enum):
     pass
 
 
-class VectorsEnum(GetValuesEnum, Enum):
-    LOCAL = 'Local'
-    ADJACENT_NETWORK = 'Adjacent Network'
-    NETWORK = 'Network'
+class VectorsEnumPresent(GetValuesEnum, Enum):
+    LOCAL = 'LOCAL'
+    ADJACENT_NETWORK = 'ADJACENT NETWORK'
+    NETWORK = 'NETWORK'
     pass
 
 
 class ComplexityEnum(GetValuesEnum, Enum):
-    LOW = 'Low'
-    MEDIUM = 'Medium'
-    HIGH = 'High'
+    LOW = 'LOW'
+    MEDIUM = 'MEDIUM'
+    HIGH = 'HIGH'
     pass
+
+# class VectorsEnumPresent(GetValuesEnum, Enum):
+#     LOCAL = 'Локально'
+#     ADJACENT_NETWORK = 'Соседняя сеть'
+#     NETWORK = 'Сеть'
+#     pass
+#
+#
+# class ComplexityEnum(GetValuesEnum, Enum):
+#     LOW = 'Низкий'
+#     MEDIUM = 'Средний'
+#     HIGH = 'Высокий'
+#     pass

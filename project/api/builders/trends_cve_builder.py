@@ -15,10 +15,10 @@ class CveTrendsTuple:
     num_retweets: str
     num_tweets_and_retweets: str
     published_date: str
-    cvss_v2_base_score: str
-    cvss_v3_base_score: str
-    cvss_v2_base_severity: str
-    cvss_v3_base_severity: str
+    score_v2: str
+    score_v3: str
+    cvss_v2: str
+    cvss_v3: str
     description: str
     epss_score: str
     nums_reddit_posts: str
@@ -53,10 +53,10 @@ class CveTrendsTupleBuilder:
             self.__result_dict["num_retweets"] = cve_data["num_retweets"]
             self.__result_dict["num_tweets_and_retweets"] = cve_data["num_tweets_and_retweets"]
             self.__result_dict["published_date"] = cve_data["publishedDate"]
-            self.__result_dict["cvss_v2_base_score"] = cve_data["cvssv2_base_score"]
-            self.__result_dict["cvss_v3_base_score"] = cve_data["cvssv3_base_score"]
-            self.__result_dict["cvss_v2_base_severity"] = cve_data["cvssv2_severity"]
-            self.__result_dict["cvss_v3_base_severity"] = cve_data["cvssv3_base_severity"]
+            self.__result_dict["score_v2"] = cve_data["cvssv2_base_score"]
+            self.__result_dict["score_v3"] = cve_data["cvssv3_base_score"]
+            self.__result_dict["cvss_v2"] = cve_data["cvssv2_severity"]
+            self.__result_dict["cvss_v3"] = cve_data["cvssv3_base_severity"]
             self.__result_dict["description"] = cve_data["description"]
             self.__result_dict["epss_score"] = cve_data["epss_score"]
             self.__result_dict["nums_reddit_posts"] = len(cve_data["reddit_posts"])

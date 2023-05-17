@@ -1,4 +1,5 @@
 import asyncio
+import logging as log
 
 from api.builders.cve_builder import Cve
 from api.yandex_api.translator_api import TranslatorApi
@@ -12,12 +13,17 @@ class TranslateBuilder:
         self.__translator: TranslatorApi = translate_api
         pass
 
-    async def a_bunch_translate(self, cve_list: List[Cve], only_first: bool = True):
-        descriptions = [cve.description for cve in cve_list]
-        descriptions = await self.__translator.a_translate(descriptions)
+    async def a_bunch_translate(self, cve_list: List[Cve]):
+        try:
+            descriptions = [cve.description for cve in cve_list]
+            descriptions = await self.__translator.a_translate(descriptions)
 
-        for cve, desc in zip(cve_list, descriptions):
-            cve.description = desc
+            for cve, desc in zip(cve_list, descriptions):
+                cve.description = desc
+                pass
+
+        except Exception as e:
+            log.warning(f'[TranslateBuilder] [a_bunch_translate] error translating, e={e}')
             pass
 
         return cve_list
