@@ -6,7 +6,7 @@ from logging import handlers
 from aiogram import Bot, Dispatcher
 
 from config import config
-from handlers import common_router, find_cve_router, cvss_router, vector_router, complexity_router, valuable_cve_router
+from handlers import common_router, find_cve_router, cvss_router, vector_router, complexity_router, valuable_cve_router,  pocs_router
 
 log = logging.getLogger('')
 log.setLevel(logging.DEBUG)
@@ -39,7 +39,8 @@ async def main() -> None:
         common_router,
         cvss_router, 
         complexity_router,
-        valuable_cve_router
+        valuable_cve_router,
+        pocs_router
     )
 
     bot = Bot(config.bot_token, parse_mode="HTML")
