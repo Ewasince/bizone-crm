@@ -1,5 +1,8 @@
 import logging as log
 
+# from aiogram.utils.markdown import quote_html
+from aiogram import html
+
 from api.builders.cve_builder import Cve
 from api.builders.trends_cve_builder import CveTrendsTuple
 from api.nist_api.enums import VectorsEnum, ComplexityEnum, CvssSeverityV3Enum, CvssSeverityV2Enum
@@ -150,8 +153,10 @@ class ParamsFormatter:
         return additional_sources
 
     def get_description(self, description):
-        description = description.replace('<', '\<')
-        description = description.replace('>', '\>')
+        # description = description.replace('<', 'меньше ')
+        # description = description.replace('>', 'больше ')
+        description = html.quote(description)
+        print(description)
         return self.__get_param_or_template(description)
 
     def get_pocs(self, pocs):
@@ -207,8 +212,6 @@ def get_cve_by_id_output_text(cve: Cve) -> str:
 ⑫ <b>Необходимые действия по устранению уязвимости</b>: {formatter.get_eliminations(cve.elimination)}
 ⑬ <b>POC</b>: {formatter.get_pocs(cve.poc)}
     """
-
-
 
     return message
 
