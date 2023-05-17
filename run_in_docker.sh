@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
-#set -e
-#set -x
+set -e
+set -x
 
 DIRECTORY=$(dirname $(readlink -e "$0"))
 cd ${DIRECTORY}
