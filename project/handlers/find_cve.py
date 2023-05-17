@@ -1,4 +1,5 @@
 import logging as log
+import re
 from typing import Dict, Any
 
 import dateutil.parser as isoparser
@@ -7,6 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from api.api_facade import get_cve_repo
+from api.cve_repository import ParamsError
 from config import config
 from forms import FindCVEGroup
 from handlers.utils import answer_decorator
@@ -31,6 +33,8 @@ async def adding_id(message: Message, state: FSMContext):
     cve_repo = get_cve_repo(None)
 
     try:
+        if not re.findall(r'CVE-\d{4}-\d+', inserted_id):
+            raise ParamsError('Wrong id')
 
         result_cve_list = await cve_repo.a_get_cve_by_id(inserted_id)
 
@@ -40,7 +44,8 @@ async def adding_id(message: Message, state: FSMContext):
         result_cve = result_cve_list[0]
 
         await answer_decorator(message, get_cve_by_id_output_text(result_cve))
-
+    except ParamsError:
+        await answer_decorator(message, f"⚠ Неверный формат CVE id! ⚠")
     except ValueError as e:
         await answer_decorator(message, f"⚠ Не найдено CVE по данному id ⚠")
     except Exception as e:
@@ -268,7 +273,8 @@ async def process_callback_cve_submit(callback_query: CallbackQuery, state: FSMC
             await answer_decorator(callback_query.message,
                                    text=get_cve_by_id_output_text(cve)
                                    )
-
+    except ParamsError as e:
+        await answer_decorator(callback_query.message, f"⚠ Вы должны передать хотя бы один параметр ⚠")
     except ValueError as e:
         await answer_decorator(callback_query.message, f"⚠ Не найдено CVE по данному id ⚠")
     except Exception as e:

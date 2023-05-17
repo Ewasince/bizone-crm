@@ -11,6 +11,10 @@ from api.trends_api.trends_api import TrendsApi
 from config import config
 
 
+class ParamsError(Exception):
+    pass
+
+
 class CveRepository:
 
     def __init__(self,
@@ -80,47 +84,63 @@ class CveRepository:
         try:
             nist_api = self.__nist_api
 
+            flag_params = False
+
             # if any(map(lambda x: x is not None, cvss)):
             if cvss is not None:
                 nist_api.set_severity_param(cvss)
+                flag_params = True
                 pass
 
             # if any(map(lambda x: x is not None, vector)):
             if vector is not None:
                 nist_api.set_vector_param(vector)
+                flag_params = True
                 pass
 
             # if any(map(lambda x: x is not None, complexity)):
             if complexity is not None:
                 nist_api.set_complexity_param(complexity)
+                flag_params = True
                 pass
 
             # if any(map(lambda x: x is not None, epss)):
             if epss is not None:
                 nist_api.set_epss_param(epss)
+                flag_params = True
                 pass
 
             if any(map(lambda x: x is not None, date)):
                 nist_api.set_date_param(date)
+                flag_params = True
                 pass
 
             if product is not None:
                 nist_api.set_product_param(product)
+                flag_params = True
                 pass
 
             if vendor is not None:
                 nist_api.set_vendor_param(vendor)
+                flag_params = True
                 pass
 
             # if any(map(lambda x: x is not None, mentions)):
             if mentions is not None:
                 nist_api.set_mentions_param(mentions)
+                flag_params = True
                 pass
+
+            if not flag_params:
+                raise ParamsError('You must specify at least one parameter!')
 
             cves_list = await self.__nist_api.a_execute_request()
             cves_list = await self.prepare_cves(cves_list)
 
             return cves_list
+        except ParamsError as e:
+            log.warning(f'[a_get_cve_by_id] FAIL, e={e}')
+            raise ParamsError()
         except Exception as e:
             log.error(f'[a_get_cve_by_id] FAIL, e={e}')
             raise Exception(f'exception in a_get_cve_by_params, e={e}')
