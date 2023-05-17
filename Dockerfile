@@ -1,12 +1,12 @@
 FROM python:3.10-slim-buster
 
 #
-RUN apt-get update \
-  && apt-get install -y curl \
-  && curl --version \
-  && apt-get clean autoclean \
-  && apt-get autoremove -y \
-  && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update \
+#  && apt-get install -y curl \
+#  && curl --version \
+#  && apt-get clean autoclean \
+#  && apt-get autoremove -y \
+#  && rm -rf /var/lib/apt/lists/*
 
 #
 WORKDIR /app
@@ -15,6 +15,11 @@ COPY . /app
 #
 RUN mkdir -p /app/logs
 RUN mkdir -p /app/data
+
+
+# deps
+RUN cd /app \
+    && pip install -r requirements.txt
 
 
 # rest port
