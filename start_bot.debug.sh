@@ -2,4 +2,4 @@
 
 mkdir -p logs
 
-docker-compose up -d --force-recreate --build debug
+docker-compose up --force-recreate --build debug
