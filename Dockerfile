@@ -8,8 +8,14 @@ FROM python:3.10-slim-buster
 #  && apt-get autoremove -y \
 #  && rm -rf /var/lib/apt/lists/*
 
-#
 WORKDIR /app
+
+# deps
+COPY ./requirements.txt /app
+
+RUN cd /app \
+    && pip install -r requirements.txt
+#
 COPY . /app
 
 #
@@ -17,9 +23,6 @@ RUN mkdir -p /app/logs
 RUN mkdir -p /app/data
 
 
-# deps
-RUN cd /app \
-    && pip install -r requirements.txt
 
 
 # rest port

@@ -1,3 +1,3 @@
 md logs
 
-docker-compose up -d --force-recreate --build debug
+docker-compose up --build debug

@@ -23,7 +23,7 @@ inline_btn_find_cve_web = InlineKeyboardButton(
 )
 
 inline_btn_find_cve_tg = InlineKeyboardButton(
-    text="CVE по параметрам (tg)",
+    text="CVE по параметрам",
     callback_data="find_cve_tg"
 )
 
