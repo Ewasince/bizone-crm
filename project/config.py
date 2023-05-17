@@ -2,6 +2,7 @@ import os
 
 from pydantic import BaseModel
 
+
 # __all__ = ['config']
 
 
@@ -26,11 +27,12 @@ class Config(BaseModel):
     cve_api_version: str
 
     max_cve_output: int
+    show_repos: int
+    show_searchsploit: int
 
     add_translate: bool
     add_epss: bool
     add_poc: bool
-    show_repos: int
 
     # делаем конфиг неизменяемым
     class Config:

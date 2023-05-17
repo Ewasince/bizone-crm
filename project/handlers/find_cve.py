@@ -19,10 +19,6 @@ from messages.cve_output import get_cve_by_id_output_text, get_params_text
 router = Router()
 
 
-# TODO верхний регист при вводе CVE
-# TODO версия ПО
-
-
 @router.message(FindCVEGroup.id)
 async def adding_id(message: Message, state: FSMContext):
     inserted_id: str = message.text

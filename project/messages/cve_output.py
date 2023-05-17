@@ -14,14 +14,14 @@ RU_NAMES_COMPLEXITY = {ComplexityEnum.LOW.value: "Низкий",
                        ComplexityEnum.MEDIUM.value: "Средний",
                        ComplexityEnum.HIGH.value: "Высокий"}
 
-RU_NAMES_CVSS3_LEVEL = {CvssSeverityV3Enum.LOW.value: "🟦Низкий🟦",
-                        CvssSeverityV3Enum.MEDIUM.value: "🟨Средний🟨",
-                        CvssSeverityV3Enum.HIGH.value: "🟧Высокий🟧",
-                        CvssSeverityV3Enum.CRITICAL.value: "🟥Критический🟥"}
+RU_NAMES_CVSS3_LEVEL = {CvssSeverityV3Enum.LOW.value: "🔵 Низкий",
+                        CvssSeverityV3Enum.MEDIUM.value: "🟡 Средний",
+                        CvssSeverityV3Enum.HIGH.value: "🟠 Высокий",
+                        CvssSeverityV3Enum.CRITICAL.value: "🔴 Критический"}
 
-RU_NAMES_CVSS2_LEVEL = {CvssSeverityV2Enum.LOW.value: "🟦Низкий🟦",
-                        CvssSeverityV2Enum.MEDIUM.value: "🟨Средний🟨",
-                        CvssSeverityV2Enum.HIGH.value: "🟥Высокий🟥"}
+RU_NAMES_CVSS2_LEVEL = {CvssSeverityV2Enum.LOW.value: "🔵 Низкий",
+                        CvssSeverityV2Enum.MEDIUM.value: "🟡 Средний",
+                        CvssSeverityV2Enum.HIGH.value: "🔴 Высокий"}
 
 
 class ParamsFormatter:
@@ -195,7 +195,7 @@ def get_cve_by_id_output_text(cve: Cve) -> str:
 ① <b>Номер CVE</b>: <a href='{formatter.get_link(cve.id)}'>{formatter.get_id(cve.id)}</a>
 ② <b>Дата/время регистрации CVE</b>: {formatter.get_date(cve.date)}
 ⑤ <b>Уровень критичности CVSS v2</b>: {formatter.get_cvss2_and_score(cve.cvss2, cve.score_v2)}
-⑤ <b>Уровень критичности CVSS v2</b>: {formatter.get_cvss3_and_score(cve.cvss3, cve.score_v3)}
+⑤ <b>Уровень критичности CVSS v3</b>: {formatter.get_cvss3_and_score(cve.cvss3, cve.score_v3)}
 ⑥ <b>Вектор атаки</b>: {formatter.get_vector(cve.vector)}
 ⑦ <b>Сложность атаки</b>: {formatter.get_complexity(cve.complexity)}
 ⑧ <b>EPSS рейтинг</b>: {formatter.get_epss(cve.epss)}

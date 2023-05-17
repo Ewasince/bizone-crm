@@ -104,8 +104,6 @@ class NistApi:
             result_cves.extend(cves)
             pass
 
-        # epss_data = None  # TODO: добавить апи на запрос epss
-
         return result_cves
 
     def __build_url(self):
@@ -292,7 +290,6 @@ class NistApi:
         for s in severity_param:
             assert s in self.__severity, "unknown severity level"
             pass
-        # FIXME: понять пончему он не видит данные от наследуемого класса
 
         self.__severity_param = tuple(severity_param)
         pass
@@ -314,8 +311,6 @@ class NistApi:
         pass
 
     def set_date_param(self, date: Tuple[str, str]):
-        # TODO: тут может быть ваш парсер
-
         start_date_str = date[0]
         end_date_str = date[1]
 

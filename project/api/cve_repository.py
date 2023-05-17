@@ -143,7 +143,6 @@ class CveRepository:
 
     async def prepare_cves(self, cves_list):
         all_cves = cves_list
-        # FIXME проверить как он отедляет cve
         if len(cves_list) > config.max_cve_output:
             cves_list = all_cves[:config.max_cve_output]
             pass
