@@ -2,7 +2,6 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from api.nist_api.enums import ComplexityEnum
 from keyboards.cvss_menu import inline_btn_back_cve_menu
-
 # Buttons
 from messages.cve_output import RU_NAMES_COMPLEXITY
 

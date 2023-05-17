@@ -9,6 +9,7 @@ from aiogram.types import Message, CallbackQuery
 from api.api_facade import get_cve_repo
 from config import config
 from forms import FindCVEGroup
+from handlers.utils import answer_decorator
 from keyboards.complexity_menu import complexity_markup
 from keyboards.cvss_menu import find_cve_cvss_markup
 from keyboards.main_menu import main_markup
@@ -38,19 +39,19 @@ async def adding_id(message: Message, state: FSMContext):
 
         result_cve = result_cve_list[0]
 
-        await message.answer(get_cve_by_id_output_text(result_cve))
+        await answer_decorator(message, get_cve_by_id_output_text(result_cve))
 
     except ValueError as e:
-        await message.answer(f"⚠ Не найдено CVE по данному id ⚠")
+        await answer_decorator(message, f"⚠ Не найдено CVE по данному id ⚠")
     except Exception as e:
         log.warning(f'[adding_id] FAIL e={e}')
-        await message.answer(f"Ошибка выполнения запроса 😢")
+        await answer_decorator(message, f"Ошибка выполнения запроса 😢")
         pass
 
-    await message.answer(
-        f"Меню",
-        reply_markup=main_markup
-    )
+    await answer_decorator(message,
+                           f"Меню",
+                           reply_markup=main_markup
+                           )
 
 
 @router.callback_query(F.data == "find_cve_vendor")
@@ -74,10 +75,10 @@ async def add_vendor(message: Message, state: FSMContext):
 
     params_text = get_params_text(user_data)
 
-    await message.answer(
-        f"Название вендора успешно установлено. Установленные параметры :{params_text}",
-        reply_markup=find_cve_markup
-    )
+    await answer_decorator(message,
+                           f"Название вендора успешно установлено. Установленные параметры :{params_text}",
+                           reply_markup=find_cve_markup
+                           )
 
 
 @router.callback_query(F.data == "find_cve_name")
@@ -101,10 +102,10 @@ async def addiing_product_name(message: Message, state: FSMContext):
 
     params_text = get_params_text(user_data)
 
-    await message.answer(
-        f"Название продукта установлено. Установленные параметры: {params_text}",
-        reply_markup=find_cve_markup
-    )
+    await answer_decorator(message,
+                           f"Название продукта установлено. Установленные параметры: {params_text}",
+                           reply_markup=find_cve_markup
+                           )
 
 
 @router.callback_query(F.data == "find_cve_start_date")
@@ -120,7 +121,7 @@ async def process_callback_add_start_date(callback_query: CallbackQuery, state: 
 @router.message(FindCVEGroup.start_date)
 async def adding_start_date(message: Message, state: FSMContext):
     inserted_date = message.text
-    inserted_date= inserted_date.strip()
+    inserted_date = inserted_date.strip()
 
     try:
         isoparser.isoparse(inserted_date)
@@ -130,19 +131,19 @@ async def adding_start_date(message: Message, state: FSMContext):
     except ValueError as e:
         log.debug(e)
 
-        return await message.answer(
-            f"Неправильный формат ввода даты, попробуйте еще раз",
-            reply_markup=find_cve_markup
-        )
+        return await answer_decorator(message,
+                                      f"Неправильный формат ввода даты, попробуйте еще раз",
+                                      reply_markup=find_cve_markup
+                                      )
 
     user_data = await state.get_data()
     await state.set_state(FindCVEGroup.default_state)
     params_text = get_params_text(user_data)
 
-    await message.answer(
-        f"Начальная дата установлена. Установленные параметры: {params_text}",
-        reply_markup=find_cve_markup
-    )
+    await answer_decorator(message,
+                           f"Начальная дата установлена. Установленные параметры: {params_text}",
+                           reply_markup=find_cve_markup
+                           )
 
 
 @router.callback_query(F.data == "find_cve_end_date")
@@ -170,19 +171,19 @@ async def addind_end_date(message: Message, state: FSMContext):
 
         user_data = await state.get_data()
 
-        return await message.answer(
-            f"Неправильный формат ввода даты, попробуйте еще раз",
-            reply_markup=find_cve_markup
-        )
+        return await answer_decorator(message,
+                                      f"Неправильный формат ввода даты, попробуйте еще раз",
+                                      reply_markup=find_cve_markup
+                                      )
 
     user_data = await state.get_data()
     await state.set_state(FindCVEGroup.default_state)
     params_text = get_params_text(user_data)
 
-    await message.answer(
-        f"Конечная дата установлена. Установленные параметры: {params_text}",
-        reply_markup=find_cve_markup
-    )
+    await answer_decorator(message,
+                           f"Конечная дата установлена. Установленные параметры: {params_text}",
+                           reply_markup=find_cve_markup
+                           )
 
 
 @router.callback_query(F.data == "find_cve_cvss")
@@ -258,25 +259,25 @@ async def process_callback_cve_submit(callback_query: CallbackQuery, state: FSMC
             raise ValueError()
 
         if len(result_list) > config.max_cve_output:
-            await callback_query.message.answer(
-                text=f'⚠ Найденных CVE слишком много, я выведу только первые {config.max_cve_output} ⚠'
-            )
+            await answer_decorator(callback_query.message,
+                                   text=f'⚠ Найденных CVE слишком много, я выведу только первые {config.max_cve_output} ⚠'
+                                   )
 
         # print(len(result_list))
         for cve in result_list[:config.max_cve_output]:
-            await callback_query.message.answer(
-                text=get_cve_by_id_output_text(cve)
-            )
+            await answer_decorator(callback_query.message,
+                                   text=get_cve_by_id_output_text(cve)
+                                   )
 
     except ValueError as e:
-        await callback_query.message.answer(f"⚠ Не найдено CVE по данному id ⚠")
+        await answer_decorator(callback_query.message, f"⚠ Не найдено CVE по данному id ⚠")
     except Exception as e:
         log.warning(f'[process_callback_cve_submit] FAIL e={e}')
-        await callback_query.message.answer(f"Ошибка выполнения запроса 😢")
+        await answer_decorator(callback_query.message, f"Ошибка выполнения запроса 😢")
         pass
 
-    await callback_query.message.answer(
-        text="Меню:",
-        reply_markup=main_markup
-    )
+    await answer_decorator(callback_query.message,
+                           text="Меню:",
+                           reply_markup=main_markup
+                           )
     pass

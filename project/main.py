@@ -6,7 +6,8 @@ from logging import handlers
 from aiogram import Bot, Dispatcher
 
 from config import config
-from handlers import common_router, find_cve_router, cvss_router, vector_router, complexity_router, valuable_cve_router,  pocs_router
+from handlers import common_router, find_cve_router, cvss_router, vector_router, complexity_router, valuable_cve_router, \
+    pocs_router
 
 # Создание логера
 log = logging.getLogger('')
@@ -44,7 +45,7 @@ async def main() -> None:
         find_cve_router,
         vector_router,
         common_router,
-        cvss_router, 
+        cvss_router,
         complexity_router,
         valuable_cve_router,
         pocs_router

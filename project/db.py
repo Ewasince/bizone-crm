@@ -39,7 +39,7 @@
 
 #     if result: 
 #         return True
-    
+
 #     return False
 
 # @dataclass
@@ -49,7 +49,6 @@
 #     @classmethod
 #     def test():
 #         for i in 
-
 
 
 # asyncio.run(check_cve("CVE-2017-2131"))

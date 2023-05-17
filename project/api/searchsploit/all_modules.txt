@@ -1,4 +1,4 @@
-   0     auxiliary/admin/android/google_play_store_uxss_xframe_rce                               normal     No     Android Browser RCE Through Google Play Store XFO
+0     auxiliary/admin/android/google_play_store_uxss_xframe_rce                               normal     No     Android Browser RCE Through Google Play Store XFO
    1     auxiliary/admin/backupexec/registry                                                     normal     No     Veritas Backup Exec Server Registry Access
    2     auxiliary/admin/cisco/cisco_dcnm_download                              2019-06-26       normal     No     Cisco Data Center Network Manager Unauthenticated File Download
    3     auxiliary/admin/cisco/cisco_secure_acs_bypass                                           normal     No     Cisco Secure ACS Unauthorized Password Change

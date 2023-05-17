@@ -1,5 +1,7 @@
-from github import Github
 from typing import List
+
+from github import Github
+
 from config import config
 
 

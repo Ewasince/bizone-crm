@@ -33,6 +33,4 @@
 #         log.warning(f"[show_news] {e}")
 
 #     for i in result_list():
-#         if 
-    
-
+#         if

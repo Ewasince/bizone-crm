@@ -27,17 +27,17 @@ inline_btn_cvss = InlineKeyboardButton(
 )
 
 inline_btn_vector = InlineKeyboardButton(
-    text="Вектор", 
+    text="Вектор",
     callback_data="find_cve_vector"
 )
 
 inline_btn_complexity = InlineKeyboardButton(
-    text="Сложность", 
+    text="Сложность",
     callback_data="find_cve_complexity"
 )
 
 inline_btn_find_cve_submit = InlineKeyboardButton(
-    text="Найти CVE по заданным параметрам", 
+    text="Найти CVE по заданным параметрам",
     callback_data="find_cve_submit"
 )
 

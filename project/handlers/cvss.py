@@ -44,7 +44,6 @@ async def process_callback_back_to_cve(callback_query: CallbackQuery, state: FSM
     user_data = await state.get_data()
     params_text = get_params_text(user_data)
 
-
     await callback_query.message.edit_text(
         f"Параметры запроса поиска: {params_text}",
         reply_markup=find_cve_markup
@@ -73,7 +72,6 @@ async def process_callback_svss_v2_low(callback_query: CallbackQuery, state: FSM
     user_data = await state.get_data()
     params_text = get_params_text(user_data)
 
-
     await callback_query.message.edit_text(
         f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
@@ -90,12 +88,10 @@ async def process_callback_cvss_v2_medium(callback_query: CallbackQuery, state: 
     user_data = await state.get_data()
     params_text = get_params_text(user_data)
 
-
     await callback_query.message.edit_text(
         f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
-
 
 
 @router.callback_query(F.data == "find_cve_cvss_v2_high")
@@ -162,7 +158,6 @@ async def process_callback_svss_v3_high(callback_query: CallbackQuery, state: FS
     )
 
 
-
 @router.callback_query(F.data == "find_cve_cvss_v3_critical")
 async def process_callback_svss_v3_critical(callback_query: CallbackQuery, state: FSMContext):
     """
@@ -177,4 +172,3 @@ async def process_callback_svss_v3_critical(callback_query: CallbackQuery, state
         f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
-

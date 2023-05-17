@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from api.api_facade import get_cve_repo
+from handlers.utils import answer_decorator
 from keyboards.main_menu import main_markup
 from messages.cve_output import get_trends_cve_output_text
 
@@ -28,62 +29,61 @@ async def procress_callback_most_valuable_day(callback_query: CallbackQuery, sta
             raise ValueError()
 
     except ValueError as e:
-        await callback_query.message.answer(
-            f"⚠ Не найдено CVE ⚠"
-        )
+        await answer_decorator(callback_query.message,
+                               f"⚠ Не найдено CVE ⚠"
+                               )
     except Exception as e:
         log.warning(f'[procress_callback_most_valuable_day] FAIL e={e}')
 
-        await callback_query.message.answer(
-            f"Ошибка выполнения запроса 😢"
-        )
+        await answer_decorator(callback_query.message,
+                               f"Ошибка выполнения запроса 😢"
+                               )
         pass
 
     for i in range(len(result)):
-        await callback_query.message.answer(
-            text=get_trends_cve_output_text(result[i], i)
-        )
+        await answer_decorator(callback_query.message,
+                               text=get_trends_cve_output_text(result[i], i)
+                               )
 
-    await callback_query.message.answer(
-        text="Меню",
-        reply_markup=main_markup
-    )
+    await answer_decorator(callback_query.message,
+                           text="Меню",
+                           reply_markup=main_markup
+                           )
 
+    @router.callback_query(F.data == "most_valuable_week")
+    async def procress_callback_most_valuable_week(callback_query: CallbackQuery, state: FSMContext):
+        """
+            valuable_cve: Handler for button that sets the parameter period to week
+        """
+        period = "7days"
+        result = []
 
-@router.callback_query(F.data == "most_valuable_week")
-async def procress_callback_most_valuable_week(callback_query: CallbackQuery, state: FSMContext):
-    """
-        valuable_cve: Handler for button that sets the parameter period to week
-    """
-    period = "7days"
-    result = []
+        cve_repo = get_cve_repo(None)
 
-    cve_repo = get_cve_repo(None)
+        try:
+            result = await cve_repo.a_get_trends_cve(period)
 
-    try:
-        result = await cve_repo.a_get_trends_cve(period)
+            if len(result) == 0:
+                raise ValueError()
 
-        if len(result) == 0:
-            raise ValueError()
+        except ValueError as e:
+            await answer_decorator(callback_query.message,
+                                   f"⚠ Не найдено CVE ⚠"
+                                   )
+        except Exception as e:
+            log.warning(f'[procress_callback_most_valuable_week] FAIL e={e}')
 
-    except ValueError as e:
-        await callback_query.message.answer(
-            f"⚠ Не найдено CVE ⚠"
-        )
-    except Exception as e:
-        log.warning(f'[procress_callback_most_valuable_week] FAIL e={e}')
+            await answer_decorator(callback_query.message,
+                                   f"Ошибка выполнения запроса 😢"
+                                   )
+            pass
 
-        await callback_query.message.answer(
-            f"Ошибка выполнения запроса 😢"
-        )
-        pass
+        for i in range(len(result)):
+            await answer_decorator(callback_query.message,
+                                   text=get_trends_cve_output_text(result[i], i)
+                                   )
 
-    for i in range(len(result)):
-        await callback_query.message.answer(
-            text=get_trends_cve_output_text(result[i], i)
-        )
-
-    await callback_query.message.answer(
-        text="Меню",
-        reply_markup=main_markup
-    )
+        await answer_decorator(callback_query.message,
+                               text="Меню",
+                               reply_markup=main_markup
+                               )

@@ -28,7 +28,6 @@ inline_btn_cvss_v2_high = InlineKeyboardButton(
     text="High", callback_data="find_cve_cvss_v2_high"
 )
 
-
 inline_btn_cvss_v3_low = InlineKeyboardButton(
     text="Low", callback_data="find_cve_cvss_v3_low"
 )

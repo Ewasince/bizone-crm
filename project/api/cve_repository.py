@@ -6,7 +6,6 @@ from api.builders.epss_builder import EpssBuilder
 from api.builders.github_builder import GithubBuilder
 from api.builders.translate_builder import TranslateBuilder
 from api.builders.trends_cve_builder import CveTrendsTuple
-from api.github_api.github_api import GithubRepo
 from api.nist_api.nist_api import NistApi
 from api.trends_api.trends_api import TrendsApi
 from config import config
@@ -169,6 +168,5 @@ class CveRepository:
             pass
 
         all_cves[:config.max_cve_output] = cves_list
-
 
         return cves_list

@@ -7,6 +7,7 @@ from aiogram.types import CallbackQuery, Message
 from api.searchsploit.searchsploit import get_urls_list
 from config import config
 from forms import FindCVEGroup
+from handlers.utils import answer_decorator
 from keyboards.main_menu import main_markup
 from messages.pocs_output import get_pocs_links_text
 
@@ -27,7 +28,7 @@ async def adding_id(message: Message, state: FSMContext):
     inserted_keyword = inserted_keyword.strip()
 
     if len(inserted_keyword) < 2:
-        await message.answer('Слишком короткий запрос')
+        await answer_decorator(message, 'Слишком короткий запрос')
         return
     try:
         result_cve_list = get_urls_list(inserted_keyword)
@@ -36,27 +37,27 @@ async def adding_id(message: Message, state: FSMContext):
             raise ValueError()
 
         if len(result_cve_list) > config.show_searchsploit:
-            await message.answer(
-                f'⚠ Результат слишком большой, поэтому я вывел только {config.show_searchsploit} ссылок ⚠')
+            await answer_decorator(message,
+                                   f'⚠ Результат слишком большой, поэтому я вывел только {config.show_searchsploit} ссылок ⚠')
             pass
 
         result_cve_list = result_cve_list[:config.show_searchsploit]
 
-        await message.answer(get_pocs_links_text(result_cve_list))
+        await answer_decorator(message, get_pocs_links_text(result_cve_list))
 
     except ValueError as e:
-        await message.answer(
-            f"⚠ Не найдено PoC ⚠"
-        )
+        await answer_decorator(message,
+                               f"⚠ Не найдено PoC ⚠"
+                               )
     except Exception as e:
         log.warning(f'[adding_id] FAIL e={e}')
 
-        await message.answer(
-            f"Ошибка выполнения запроса 😢"
-        )
+        await answer_decorator(message,
+                               f"Ошибка выполнения запроса 😢"
+                               )
         pass
 
-    await message.answer(
-        f"Меню",
-        reply_markup=main_markup
-    )
+    await answer_decorator(message,
+                           f"Меню",
+                           reply_markup=main_markup
+                           )

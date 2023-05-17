@@ -1,9 +1,8 @@
-from typing import List
 import logging as log
+from typing import List
 
 from api.builders.cve_builder import Cve
 from api.github_api.github_api import GithubRepo
-from config import config
 
 
 class GithubBuilder:

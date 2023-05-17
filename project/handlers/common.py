@@ -5,6 +5,7 @@ from aiogram.types import Message, CallbackQuery
 
 from config import config
 from forms import FindCVEGroup
+from handlers.utils import answer_decorator
 from keyboards.main_menu import main_markup, greetings_markup
 from keyboards.params_searching_cve_menu import find_cve_markup
 from keyboards.valyable_cve_menu import most_valuable_cve_markup
@@ -18,9 +19,9 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     """
         start command hadler
     """
-    await message.answer(f"Привет, <b>{message.from_user.full_name}</b>! Меня зовут {config.bot_name}!" +
-                         " Я помогу тебе получить актуальную информацию о сущетсвующих на данный момент CVE.",
-                         reply_markup=greetings_markup)
+    await answer_decorator(message, f"Привет, <b>{message.from_user.full_name}</b>! Меня зовут {config.bot_name}!" +
+                           " Я помогу тебе получить актуальную информацию о сущетсвующих на данный момент CVE.",
+                           reply_markup=greetings_markup)
 
 
 @router.callback_query(F.data == "menu_btn")
@@ -29,7 +30,7 @@ async def process_callback_main_menu(callback_query: CallbackQuery, state: FSMCo
         main menu handler
     """
     await state.clear()
-    await callback_query.message.answer("Главное меню", reply_markup=main_markup)
+    await answer_decorator(callback_query.message, "Главное меню", reply_markup=main_markup)
 
 
 @router.callback_query(F.data == "find_cve_tg")
@@ -51,7 +52,8 @@ async def process_callback_find_cve(callback_query: CallbackQuery, state: FSMCon
     user_data = await state.get_data()
     params_text = get_params_text(user_data)
 
-    await callback_query.message.answer(f"Параметры запроса поиска: {params_text}", reply_markup=find_cve_markup)
+    await answer_decorator(callback_query.message, f"Параметры запроса поиска: {params_text}",
+                           reply_markup=find_cve_markup)
 
 
 @router.callback_query(F.data == "find_cve_by_id")

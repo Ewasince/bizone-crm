@@ -19,7 +19,7 @@ inline_btn_most_valuable_cve = InlineKeyboardButton(
 
 inline_btn_find_cve_web = InlineKeyboardButton(
     text="CVE по параметрам (web)",
-      callback_data="find_cve_web"
+    callback_data="find_cve_web"
 )
 
 inline_btn_find_cve_tg = InlineKeyboardButton(
@@ -38,7 +38,7 @@ inline_btn_subscribe_on_news = InlineKeyboardButton(
 )
 
 # markups 
-greetings_markup =  InlineKeyboardMarkup(
+greetings_markup = InlineKeyboardMarkup(
     inline_keyboard=[
         [inline_btn_menu]
     ]

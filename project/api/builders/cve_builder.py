@@ -1,8 +1,8 @@
-import logging as log
+from dataclasses import dataclass, fields
 from dataclasses import dataclass, fields
 from typing import Optional, List
 
-from api.nist_api.enums import CvssVerEnum, VectorsEnum, ComplexityEnum, CvssSeverityV2Enum, CvssSeverityV3Enum
+from api.nist_api.enums import CvssSeverityV2Enum, CvssSeverityV3Enum
 
 
 @dataclass
@@ -222,10 +222,10 @@ class CveTupleBuilder:
 
         metric_cvss = metrics[metrics_name][0]
         cvss_data = metric_cvss['cvssData']
-            
+
         # устанавливаем оценку опасности
         score = cvss_data['baseScore']
-                
+
         self.__result_dict[score_name] = score
 
         base_severity = score_func(float(score))
@@ -271,8 +271,7 @@ class CveTupleBuilder:
         :param configurations:
         :return:
         """
-        products_names = []
-        product_versions = []
+        product_vesions_names = set()
         for conf in configurations:
             for node in conf['nodes']:
                 for cpe_match in node['cpeMatch']:
@@ -288,10 +287,20 @@ class CveTupleBuilder:
                     else:
                         product_version = criteria[5]
                         pass
-                    products_names.append(product_name)
-                    product_versions.append(product_version)
+
+                    product_vesions_names.add((product_name, product_version))
+                    # products_names.add(product_name)
+                    # product_versions.add(product_version)
                 pass  # -- for
             pass  # -- for
+
+        products_names = []
+        product_versions = []
+
+        for n, v in product_vesions_names:
+            products_names.append(n)
+            product_versions.append(v)
+            pass
 
         self.__result_dict['product'] = '\n'.join(products_names)
         self.__result_dict['versions'] = '\n'.join(product_versions)

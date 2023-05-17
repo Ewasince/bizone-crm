@@ -10,7 +10,6 @@ from pytz import timezone
 
 from api.builders.cve_builder import CveTupleBuilder, Cve
 from api.nist_api.enums import CvssVerEnum, CvssSeverityV2Enum, CvssSeverityV3Enum, VectorsEnum, ComplexityEnum
-
 from config import config
 
 

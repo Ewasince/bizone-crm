@@ -55,5 +55,3 @@ async def process_callback_complexity_high(callback_query: CallbackQuery, state:
         f"Сложность успешно установлена. Установленные параметры:: {params}",
         reply_markup=find_cve_markup
     )
-
-

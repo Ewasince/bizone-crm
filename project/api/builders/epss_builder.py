@@ -1,5 +1,5 @@
-from typing import List
 import logging as log
+from typing import List
 
 from api.builders.cve_builder import Cve
 from api.epss_api.epss_api import EpssApi
