@@ -28,7 +28,7 @@ inline_btn_find_cve_tg = InlineKeyboardButton(
 )
 
 inline_btn_find_poc_by_keywords = InlineKeyboardButton(
-    text="Поиск poc по ключевым словам",
+    text="Поиск POC по ключевым словам",
     callback_data="pocs_by_keywords"
 )
 

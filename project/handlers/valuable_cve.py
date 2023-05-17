@@ -24,8 +24,20 @@ async def procress_callback_most_valuable_day(callback_query: CallbackQuery, sta
     try:
         result = await cve_repo.a_get_trends_cve(period)
 
+        if len(result) == 0:
+            raise ValueError()
+
+    except ValueError as e:
+        await callback_query.message.answer(
+            f"⚠ Не найдено CVE ⚠"
+        )
     except Exception as e:
-        log.warning(f"[valuable_cve] {e}")
+        log.warning(f'[procress_callback_most_valuable_day] FAIL e={e}')
+
+        await callback_query.message.answer(
+            f"Ошибка выполнения запроса 😢"
+        )
+        pass
 
     for i in range(len(result)):
         await callback_query.message.answer(
@@ -51,8 +63,20 @@ async def procress_callback_most_valuable_week(callback_query: CallbackQuery, st
     try:
         result = await cve_repo.a_get_trends_cve(period)
 
+        if len(result) == 0:
+            raise ValueError()
+
+    except ValueError as e:
+        await callback_query.message.answer(
+            f"⚠ Не найдено CVE ⚠"
+        )
     except Exception as e:
-        log.warning(f"[valuable_cve] {e}")
+        log.warning(f'[procress_callback_most_valuable_week] FAIL e={e}')
+
+        await callback_query.message.answer(
+            f"Ошибка выполнения запроса 😢"
+        )
+        pass
 
     for i in range(len(result)):
         await callback_query.message.answer(

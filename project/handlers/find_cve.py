@@ -22,6 +22,10 @@ router = Router()
 @router.message(FindCVEGroup.id)
 async def adding_id(message: Message, state: FSMContext):
     inserted_id: str = message.text
+    inserted_id = inserted_id.strip().upper()
+    if inserted_id.find('CVE') < 0:
+        inserted_id = 'CVE-' + inserted_id
+        pass
 
     cve_repo = get_cve_repo(None)
 
@@ -30,18 +34,18 @@ async def adding_id(message: Message, state: FSMContext):
         result_cve_list = await cve_repo.a_get_cve_by_id(inserted_id)
 
         if len(result_cve_list) != 1:
-            raise Exception("Wrong number of cve!")
-            pass
+            raise ValueError("Wrong number of cve!")
 
         result_cve = result_cve_list[0]
 
         await message.answer(get_cve_by_id_output_text(result_cve))
 
+    except ValueError as e:
+        await message.answer(f"⚠ Не найдено CVE по данному id ⚠")
     except Exception as e:
         log.warning(f'[adding_id] FAIL e={e}')
-        # return
+        await message.answer(f"Ошибка выполнения запроса 😢")
         pass
-
 
     await message.answer(
         f"Меню",
@@ -61,6 +65,7 @@ async def process_callback_add_vendor(callback_query: CallbackQuery, state: FSMC
 @router.message(FindCVEGroup.vendor)
 async def add_vendor(message: Message, state: FSMContext):
     input_vendor: str = message.text
+    input_vendor = input_vendor.strip()
 
     await state.update_data(vendor=input_vendor)
 
@@ -87,6 +92,7 @@ async def process_callback_add_product_name(callback_query: CallbackQuery, state
 @router.message(FindCVEGroup.product)
 async def addiing_product_name(message: Message, state: FSMContext):
     inserted_name = message.text
+    inserted_name = inserted_name.strip()
 
     await state.update_data(product=inserted_name)
 
@@ -114,6 +120,7 @@ async def process_callback_add_start_date(callback_query: CallbackQuery, state: 
 @router.message(FindCVEGroup.start_date)
 async def adding_start_date(message: Message, state: FSMContext):
     inserted_date = message.text
+    inserted_date= inserted_date.strip()
 
     try:
         isoparser.isoparse(inserted_date)
@@ -131,7 +138,6 @@ async def adding_start_date(message: Message, state: FSMContext):
     user_data = await state.get_data()
     await state.set_state(FindCVEGroup.default_state)
     params_text = get_params_text(user_data)
-
 
     await message.answer(
         f"Начальная дата установлена. Установленные параметры: {params_text}",
@@ -152,6 +158,7 @@ async def process_callback_add_end_date(callback_query: CallbackQuery, state: FS
 @router.message(FindCVEGroup.end_date)
 async def addind_end_date(message: Message, state: FSMContext):
     inserted_date = message.text
+    inserted_date = inserted_date.strip()
 
     try:
         isoparser.isoparse(inserted_date)
@@ -171,7 +178,6 @@ async def addind_end_date(message: Message, state: FSMContext):
     user_data = await state.get_data()
     await state.set_state(FindCVEGroup.default_state)
     params_text = get_params_text(user_data)
-
 
     await message.answer(
         f"Конечная дата установлена. Установленные параметры: {params_text}",
@@ -224,10 +230,6 @@ async def process_callback_cve_submit(callback_query: CallbackQuery, state: FSMC
 
     log.debug(f'[process_callback_cve_submit] request_params_raw={request_params_raw}')
 
-    result_list = []
-
-    # request_params = request_params_raw
-
     request_params = {}
     request_params['vendor'] = request_params_raw["vendor"]
     request_params['product'] = request_params_raw["product"]
@@ -251,24 +253,30 @@ async def process_callback_cve_submit(callback_query: CallbackQuery, state: FSMC
             qm=None,
             mentions=None
         )
+
+        if len(result_list) == 0:
+            raise ValueError()
+
+        if len(result_list) > config.max_cve_output:
+            await callback_query.message.answer(
+                text=f'⚠ Найденных CVE слишком много, я выведу только первые {config.max_cve_output} ⚠'
+            )
+
+        # print(len(result_list))
+        for cve in result_list[:config.max_cve_output]:
+            await callback_query.message.answer(
+                text=get_cve_by_id_output_text(cve)
+            )
+
+    except ValueError as e:
+        await callback_query.message.answer(f"⚠ Не найдено CVE по данному id ⚠")
     except Exception as e:
-        log.warning(f"[cve_submit] {e}")
+        log.warning(f'[process_callback_cve_submit] FAIL e={e}')
+        await callback_query.message.answer(f"Ошибка выполнения запроса 😢")
         pass
-
-    if len(result_list) > config.max_cve_output:
-        await callback_query.message.answer(
-            text='Найденных CVE слишком много, я выведу только первые пять'
-        )
-
-        # get_cve_by_id_output_text(result_cve)
-
-    print(len(result_list))
-    for cve in result_list[:config.max_cve_output]:
-        await callback_query.message.answer(
-            text=get_cve_by_id_output_text(cve)
-        )
 
     await callback_query.message.answer(
         text="Меню:",
         reply_markup=main_markup
     )
+    pass

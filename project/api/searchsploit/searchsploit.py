@@ -41,10 +41,12 @@ def get_urls_list(input_request) -> List[Tuple[str, str]]:
     :return:
     """
 
+    keywords = input_request.split()
+
     url_list = []
     print(len(cves_links))
     for line in cves_links:
-        if check_substring(line, input_request):
+        if all(map(lambda k: check_substring(line, k), keywords)):
             urls_base = ''
             if int(line[len(line) - 1]) < 1715:
                 urls_base = 'https://www.rapid7.com/db/modules/'
