@@ -41,7 +41,7 @@ class CvssSeverityV3Enum(GetValuesEnum, Enum):
 
 class VectorsEnum(GetValuesEnum, Enum):
     LOCAL = 'LOCAL'
-    ADJACENT_NETWORK = 'ADJACENT NETWORK'
+    ADJACENT_NETWORK = 'ADJACENT_NETWORK'
     NETWORK = 'NETWORK'
     pass
 

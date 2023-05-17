@@ -6,6 +6,8 @@ from api.nist_api.enums import VectorsEnum, ComplexityEnum, CvssSeverityV3Enum, 
 
 NONE_TEMPLATE = 'Нет информации  😞'
 
+EMPTY_PARAM_TEMPLATE = '🗒'
+
 RU_NAMES_VECTOR = {VectorsEnum.LOCAL.value: "Локально",
                    VectorsEnum.ADJACENT_NETWORK.value: "Соседняя сеть",
                    VectorsEnum.NETWORK.value: "Сеть"}
@@ -238,9 +240,6 @@ def get_trends_cve_output_text(cve: CveTrendsTuple, number: int) -> str:
 ⑨ <b>Описание CVE:</b> {formatter.get_description(cve.description)}
     """
     return message
-
-
-EMPTY_PARAM_TEMPLATE = 'Значение не задано'
 
 
 def get_params_text(params: dict) -> str:

@@ -35,12 +35,13 @@ async def adding_id(message: Message, state: FSMContext):
 
         result_cve = result_cve_list[0]
 
+        await message.answer(get_cve_by_id_output_text(result_cve))
+
     except Exception as e:
         log.warning(f'[adding_id] FAIL e={e}')
-        return
+        # return
         pass
 
-    await message.answer(get_cve_by_id_output_text(result_cve))
 
     await message.answer(
         f"Меню",

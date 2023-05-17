@@ -211,12 +211,12 @@ class CveTupleBuilder:
                 metrics_name = 'cvssMetricV30'
                 score_name = 'score_v3'
                 cvss_name = 'cvss3'
-                score_func = self.__get_severity_v2
+                score_func = self.__get_severity_v3
             case '31':
                 metrics_name = 'cvssMetricV31'
                 score_name = 'score_v3'
                 cvss_name = 'cvss3'
-                score_func = self.__get_severity_v2
+                score_func = self.__get_severity_v3
             case _:
                 raise Exception('Wrong ver name')
 

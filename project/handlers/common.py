@@ -51,7 +51,6 @@ async def process_callback_find_cve(callback_query: CallbackQuery, state: FSMCon
     user_data = await state.get_data()
     params_text = get_params_text(user_data)
 
-
     await callback_query.message.answer(f"Параметры запроса поиска: {params_text}", reply_markup=find_cve_markup)
 
 
