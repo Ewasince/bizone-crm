@@ -7,7 +7,7 @@ class GithubRepo:
 
     def get_poc_from_github(self, cve_id: str) -> List[str]:
         """
-        Получиение информации о репозиториях по СМУ id
+        Получиение информации о репозиториях по CVE id
 
         :param cve_id:
         :return:

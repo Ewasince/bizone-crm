@@ -153,8 +153,6 @@ class ParamsFormatter:
         return additional_sources
 
     def get_description(self, description):
-        # description = description.replace('<', 'меньше ')
-        # description = description.replace('>', 'больше ')
         description = html.quote(description)
         print(description)
         return self.__get_param_or_template(description)

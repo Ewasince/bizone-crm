@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 def check_substring(line_list, blueprint):
     """
-    Проверка что заданное слово входит в описание пока СМУ
+    Проверка что заданное слово входит в описание пока CVE
 
     :param line_list:
     :param blueprint:
@@ -18,7 +18,7 @@ def check_substring(line_list, blueprint):
 
 def split_file_lines():
     """
-    Вспомогательная функция для парса файла с поками СМУ
+    Вспомогательная функция для парса файла с поками CVE
 
     :return:
     """
@@ -35,7 +35,7 @@ def split_file_lines():
 
 def get_urls_list(input_request) -> List[Tuple[str, str]]:
     """
-    Получает ссылки на поки СМУ по ключевым словам
+    Получает ссылки на поки CVE по ключевым словам
 
     :param input_request:
     :return:

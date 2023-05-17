@@ -29,7 +29,7 @@ class CveRepository:
 
     async def a_get_cve_by_id(self, cve_id: str) -> List[Cve]:
         """
-        Асинхронное получение СМУ по id
+        Асинхронное получение CVE по id
 
         :param cve_id:
         :return:
@@ -146,7 +146,7 @@ class CveRepository:
 
     async def prepare_cves(self, cves_list):
         """
-        Функция которая производит пост-обработку списка СМУ.
+        Функция которая производит пост-обработку списка CVE.
 
         :param cves_list:
         :return:

@@ -51,7 +51,7 @@ class CveTrendsTupleBuilder:
 
     def build(self, raw_data):
         """
-        Создаёт объект СМУ из информации от trends_api
+        Создаёт объект CVE из информации от trends_api
 
         :param raw_data:
         :return:
