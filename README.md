@@ -7,7 +7,7 @@
 
 ## docker
 
-Запустить скрипт **start_bot.prod.sh**
+- Запустить скрипт **start_bot.prod.sh**
 
 ## no-docker
 
