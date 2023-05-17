@@ -14,6 +14,11 @@ class TrendsApi:
         pass
 
     async def a_execute_request(self):
+        """
+        Выполняет запрос на получение последних актуальных СМУ
+
+        :return:
+        """
         cve_row_list = []
 
         if self.__url == '' or self.__period == '':

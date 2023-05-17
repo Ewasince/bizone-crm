@@ -12,6 +12,12 @@ class EpssBuilder:
         pass
 
     async def a_bunch_add_epss(self, cves: List[Cve]):
+        """
+        Получает и добавляет очки epss к существующему списку CVE
+
+        :param cves:
+        :return:
+        """
         try:
             cve_id_list = []
             for cve in cves:

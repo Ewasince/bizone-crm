@@ -2,6 +2,9 @@ from aiogram.fsm.state import State, StatesGroup
 
 
 class FindCVEGroup(StatesGroup):
+    """
+    Перечисление всех состояних бота
+    """
     default_state = State()
     id = State()
     vendor = State()

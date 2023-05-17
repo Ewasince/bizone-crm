@@ -11,7 +11,7 @@ from api.yandex_api.translator_api import TranslatorApi
 
 def get_cve_repo(ver_cvss):
     """
-    Метод-фасад, который скрывает создание классов апи для создания класса репозитория
+    Метод-фасад, который скрывает создание экземпляров апи для создания класса репозитория
 
     :param ver_cvss: Версия CVSS. Пример: '2', '31', None
     :return:

@@ -6,6 +6,12 @@ from config import config
 class GithubRepo:
 
     def get_poc_from_github(self, cve_id: str) -> List[str]:
+        """
+        Получиение информации о репозиториях по СМУ id
+
+        :param cve_id:
+        :return:
+        """
         github_api = Github(config.github_token)
 
         repos = github_api.search_repositories(cve_id)

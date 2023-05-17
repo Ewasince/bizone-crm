@@ -2,11 +2,15 @@ import logging as log
 from dataclasses import dataclass, fields
 from typing import Optional, List
 
-from api.nist_api.enums import CvssVerEnum, VectorsEnumPresent, ComplexityEnum, CvssSeverityV2Enum, CvssSeverityV3Enum
+from api.nist_api.enums import CvssVerEnum, VectorsEnum, ComplexityEnum, CvssSeverityV2Enum, CvssSeverityV3Enum
 
 
 @dataclass
 class Cve:
+    '''
+    Класс, представляющий объект CVE
+    '''
+
     id: str
     link: Optional[str]
     vector: Optional[str]
@@ -27,12 +31,20 @@ class Cve:
 
     @staticmethod
     def get_fields():
+        '''
+        Фукнция, возвращающая список имен всех полей
+
+        :return:
+        '''
         return [f.name for f in fields(Cve)]
 
     pass
 
 
 class CveTupleBuilder:
+    '''
+    Клас, создающий CVE из сырых данных json
+    '''
 
     def __init__(self):
         self.__resul_cves: Optional[List[Cve]] = []
@@ -41,11 +53,23 @@ class CveTupleBuilder:
         pass
 
     def reset(self):
+        """
+        Сбрасывает состояние билдера
+
+        :return:
+        """
         self.__result_dict = {k: None for k in Cve.get_fields()}
         self.__resul_cves = []
         pass
 
     def build(self, cve_all_data):
+        """
+        Создаёт список CVE из переданного объекта json
+
+        :param cve_all_data:
+        :return:
+        """
+
         for vulnerability in cve_all_data['vulnerabilities']:
 
             cve_data = vulnerability['cve']
@@ -75,10 +99,22 @@ class CveTupleBuilder:
         pass
 
     def __get_data_from_cve_all_data(self, cve_all_data) -> None:
+        """
+        Получает версию CVSS
+
+        :param cve_all_data:
+        :return:
+        """
         self.__result_dict['cvss_version'] = cve_all_data['version']
         pass
 
     def __get_data_from_cve_data(self, cve_data) -> None:
+        """
+        Получает дату и id cve, а так же создаёт ссылку на него
+
+        :param cve_data:
+        :return:
+        """
         cve_id: str = cve_data['id']
         self.__result_dict['id'] = cve_id
         self.__result_dict['date'] = cve_data['published']
@@ -87,14 +123,33 @@ class CveTupleBuilder:
         pass
 
     def __set_vector(self, vector):
+        """
+        Устанавливает вектор атаки
+
+        :param vector:
+        :return:
+        """
         self.__result_dict['vector'] = vector
         pass
 
     def __set_complexity(self, complexity):
+        """
+        Устанавливает сложность применения атаки
+
+        :param complexity:
+        :return:
+        """
         self.__result_dict['complexity'] = complexity
         pass
 
     def __get_data_from_cve_metrics(self, metrics) -> None:
+        """
+        Устанавливает уровень опасности CVE для CVSS v2 и v3
+        Так же устанавливает вектор и сложность
+
+        :param metrics:
+        :return:
+        """
         if len(metrics) == 0:
             return
 
@@ -138,20 +193,14 @@ class CveTupleBuilder:
 
         pass
 
-        # if 'cvssMetricV2' in metrics:
-        #     pass
-        # 
-        # if 'cvssMetricV30' in metrics:
-        #     self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV30'], CvssVerEnum.VER3.value, score)
-        #     pass
-        # 
-        # elif 'cvssMetricV31' in metrics:
-        #     self.__get_cvss_from_cvss_metrics(metrics['cvssMetricV31'], CvssVerEnum.VER31.value, score)
-        #     pass
-
-        pass
-
     def __get_cvss_from_cvss_metrics(self, metrics, ver: str) -> None:
+        """
+        Вспомогательная функция, заполняет данные о уровне критичность CVE
+
+        :param metrics:
+        :param ver:  Версия CVSS, пример: '2', '31'
+        :return:
+        """
         match ver:
             case '2':
                 metrics_name = 'cvssMetricV2'
@@ -184,6 +233,13 @@ class CveTupleBuilder:
         pass
 
     def __get_severity_v2(self, score) -> str:
+        """
+        Вспомогательная функция выдаёт уровень опасности CVE по уровню score
+
+        :param score:
+        :return:
+        """
+
         if score < 4.0:
             return CvssSeverityV2Enum.LOW.value
         elif 4.0 <= score < 7.0:
@@ -192,6 +248,13 @@ class CveTupleBuilder:
             return CvssSeverityV2Enum.HIGH.value
 
     def __get_severity_v3(self, score) -> str:
+        """
+        Вспомогательная функция выдаёт уровень опасности CVE по уровню score
+
+        :param score:
+        :return:
+        """
+
         if score < 4.0:
             return CvssSeverityV3Enum.LOW.value
         elif 4.0 <= score < 7.0:
@@ -202,6 +265,12 @@ class CveTupleBuilder:
             return CvssSeverityV3Enum.CRITICAL.value
 
     def __get_data_from_cve_configurations(self, configurations) -> None:
+        """
+        Устанавливает уязвимые продукты и их версии
+
+        :param configurations:
+        :return:
+        """
         products_names = []
         product_versions = []
         for conf in configurations:
@@ -229,6 +298,12 @@ class CveTupleBuilder:
         pass
 
     def __get_data_from_cve_refs(self, references) -> None:
+        """
+        Устанавливает упоминания на CVE
+
+        :param references:
+        :return:
+        """
         references_urls = []
         for ref in references:
             url = ref['url']
@@ -239,6 +314,12 @@ class CveTupleBuilder:
         pass
 
     def __get_data_from_cve_description(self, descriptions) -> None:
+        """
+        Устанавливает описание CVE
+
+        :param descriptions:
+        :return:
+        """
         for description in descriptions:
             if description['lang'] == 'ru':
                 self.__result_dict['description'] = description['value']
@@ -253,9 +334,10 @@ class CveTupleBuilder:
             pass
         pass
 
-    def find_mentions(self, cve_id: str) -> str:
-        log.warning(f'[CveTupleBuilder] [find_mentions] not implemented yet!')
-        return None
-
     def get_result(self) -> List[Cve]:
+        """
+        Выдаёт итоговый список CVE
+
+        :return:
+        """
         return self.__resul_cves

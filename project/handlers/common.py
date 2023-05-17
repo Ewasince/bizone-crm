@@ -38,10 +38,6 @@ async def process_callback_find_cve(callback_query: CallbackQuery, state: FSMCon
         find_cve_menu handler
     """
 
-    """
-        ТУТ СПИСОК ВСЕХ ПАРАМЕТРОВ 
-        TODO ПОТОМ убрать коммент
-    """
     await state.update_data(
         vendor=None,
         product=None,

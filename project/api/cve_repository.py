@@ -29,7 +29,10 @@ class CveRepository:
 
     async def a_get_cve_by_id(self, cve_id: str) -> List[Cve]:
         """
-        returns a list of Cve by passed cve id
+        Асинхронное получение СМУ по id
+
+        :param cve_id:
+        :return:
         """
 
         try:
@@ -56,7 +59,7 @@ class CveRepository:
                                   mentions: Optional[Tuple[float, float]]
                                   ) -> List[Cve]:
         """
-        Принимает на вход критерии поиска и выдаёт cve по этим критериям. Если вместо критерия передано None, критерий
+        Принимает на вход критерии поиска и выдаёт список CVE по этим критериям. Если вместо критерия передано None, критерий
         при поиске не учитывается
 
 
@@ -125,7 +128,7 @@ class CveRepository:
 
     async def a_get_trends_cve(self, period: str):
         """
-            Выдаёт самые пополярные CVE за последний промежуток {__period} времени
+            Выдаёт самые популярные CVE за последний промежуток {period} времени
         """
 
         try:
@@ -142,6 +145,12 @@ class CveRepository:
         pass
 
     async def prepare_cves(self, cves_list):
+        """
+        Функция которая производит пост-обработку списка СМУ.
+
+        :param cves_list:
+        :return:
+        """
         all_cves = cves_list
         if len(cves_list) > config.max_cve_output:
             cves_list = all_cves[:config.max_cve_output]

@@ -23,15 +23,6 @@ router = Router()
 async def adding_id(message: Message, state: FSMContext):
     inserted_id: str = message.text
 
-    # try:
-    #     inserted_id = int(inserted_id)
-    # except Exception as e:
-    #     log.debug(e)
-    #     return await message.answer(
-    #         "Неверное значение Id, попробуйте еще раз",
-    #         reply_markup=main_markup
-    #     )
-
     cve_repo = get_cve_repo(None)
 
     try:

@@ -14,6 +14,12 @@ class TranslateBuilder:
         pass
 
     async def a_bunch_translate(self, cve_list: List[Cve]):
+        """
+        Переводит описание у списка СМУ
+
+        :param cve_list:
+        :return:
+        """
         try:
             descriptions = [cve.description for cve in cve_list]
             descriptions = await self.__translator.a_translate(descriptions)

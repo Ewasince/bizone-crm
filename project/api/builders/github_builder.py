@@ -13,6 +13,12 @@ class GithubBuilder:
         pass
 
     def add_repos(self, cves: List[Cve]):
+        """
+        Получает и добавляет репозитории с возможными POC'ами в существующий список СМУ
+
+        :param cves:
+        :return:
+        """
         try:
             for cve in cves:
                 repos_links = self.__github_repo.get_poc_from_github(cve.id)

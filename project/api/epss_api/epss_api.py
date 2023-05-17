@@ -10,6 +10,12 @@ class EpssApi:
     __cve_per_request = 110
 
     async def a_get_epss_api(self, cve_ids: List[str]) -> List[str]:
+        """
+        Асинхронное получение оценки EPSS от апи
+
+        :param cve_ids:
+        :return:
+        """
 
         cve_num = EpssApi.__cve_per_request
         cve_epss_datas = []

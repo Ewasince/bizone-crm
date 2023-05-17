@@ -41,10 +41,21 @@ class CveTrendsTupleBuilder:
         self.reset()
 
     def reset(self):
+        """
+        Сбрасывает состояние билдера
+
+        :return:
+        """
         self.__result_dict = {k: None for k in CveTrendsTuple.get_fields()}
         self.__resul_cves = []
 
     def build(self, raw_data):
+        """
+        Создаёт объект СМУ из информации от trends_api
+
+        :param raw_data:
+        :return:
+        """
         for cve_data in raw_data:
             self.__result_dict["id"] = cve_data["cve"]
             self.__result_dict["cve_link"] = f"https://nvd.nist.gov/vuln/detail/{cve_data['cve'].upper()}"
@@ -67,6 +78,11 @@ class CveTrendsTupleBuilder:
             self.__resul_cves.append(CveTrendsTuple(**self.__result_dict))
 
     def get_result(self) -> List[CveTrendsTuple]:
+        """
+        Выдаёт результат
+
+        :return:
+        """
         return self.__resul_cves
 
     # def generate_graph(self, raw_data: List[Dict]):

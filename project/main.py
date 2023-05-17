@@ -8,6 +8,7 @@ from aiogram import Bot, Dispatcher
 from config import config
 from handlers import common_router, find_cve_router, cvss_router, vector_router, complexity_router, valuable_cve_router,  pocs_router
 
+# Создание логера
 log = logging.getLogger('')
 log.setLevel(logging.DEBUG)
 format = logging.Formatter(
@@ -31,6 +32,12 @@ log.addHandler(file_handler)
 
 
 async def main() -> None:
+    '''
+    Входная точка проекта
+
+    :return:
+    '''
+
     dp = Dispatcher()
 
     dp.include_routers(

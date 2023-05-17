@@ -1,5 +1,9 @@
 from enum import Enum
 
+"""
+Файл со всеми перечислениями
+"""
+
 
 class CvssVerEnum(Enum):
     VER2 = '2'
@@ -35,7 +39,7 @@ class CvssSeverityV3Enum(GetValuesEnum, Enum):
     pass
 
 
-class VectorsEnumPresent(GetValuesEnum, Enum):
+class VectorsEnum(GetValuesEnum, Enum):
     LOCAL = 'LOCAL'
     ADJACENT_NETWORK = 'ADJACENT NETWORK'
     NETWORK = 'NETWORK'
@@ -47,16 +51,3 @@ class ComplexityEnum(GetValuesEnum, Enum):
     MEDIUM = 'MEDIUM'
     HIGH = 'HIGH'
     pass
-
-# class VectorsEnumPresent(GetValuesEnum, Enum):
-#     LOCAL = 'Локально'
-#     ADJACENT_NETWORK = 'Соседняя сеть'
-#     NETWORK = 'Сеть'
-#     pass
-#
-#
-# class ComplexityEnum(GetValuesEnum, Enum):
-#     LOW = 'Низкий'
-#     MEDIUM = 'Средний'
-#     HIGH = 'Высокий'
-#     pass

@@ -2,13 +2,13 @@ import logging as log
 
 from api.builders.cve_builder import Cve
 from api.builders.trends_cve_builder import CveTrendsTuple
-from api.nist_api.enums import VectorsEnumPresent, ComplexityEnum, CvssSeverityV3Enum, CvssSeverityV2Enum
+from api.nist_api.enums import VectorsEnum, ComplexityEnum, CvssSeverityV3Enum, CvssSeverityV2Enum
 
 NONE_TEMPLATE = 'Нет информации  😞'
 
-RU_NAMES_VECTOR = {VectorsEnumPresent.LOCAL.value: "Локально",
-                   VectorsEnumPresent.ADJACENT_NETWORK.value: "Соседняя сеть",
-                   VectorsEnumPresent.NETWORK.value: "Сеть"}
+RU_NAMES_VECTOR = {VectorsEnum.LOCAL.value: "Локально",
+                   VectorsEnum.ADJACENT_NETWORK.value: "Соседняя сеть",
+                   VectorsEnum.NETWORK.value: "Сеть"}
 
 RU_NAMES_COMPLEXITY = {ComplexityEnum.LOW.value: "Низкий",
                        ComplexityEnum.MEDIUM.value: "Средний",
@@ -153,7 +153,7 @@ class ParamsFormatter:
     def get_pocs(self, pocs):
         pocs_str = ""
 
-        if pocs is not None:
+        if pocs is not None and len(pocs) > 0:
             for link in pocs:
                 pocs_str += f"""\n  -  <a href='{link}'>poc</a>"""
                 pass

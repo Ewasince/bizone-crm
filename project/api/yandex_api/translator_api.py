@@ -17,6 +17,12 @@ class TranslatorApi:
     __url = 'https://translate.api.cloud.yandex.net/translate/v2/translate'
 
     async def a_translate(self, texts: List[str]) -> List[str]:
+        """
+        Асинхронно переводит полученный текст
+
+        :param texts: текст для перевода
+        :return: переведённый тескт
+        """
         body = {
             "targetLanguageCode": TranslatorApi.__target_language,
             "sourceLanguageCode": TranslatorApi.__source_language,

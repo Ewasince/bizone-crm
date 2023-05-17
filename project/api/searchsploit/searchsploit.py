@@ -3,6 +3,13 @@ from typing import List, Tuple
 
 
 def check_substring(line_list, blueprint):
+    """
+    Проверка что заданное слово входит в описание пока СМУ
+
+    :param line_list:
+    :param blueprint:
+    :return:
+    """
     for word in line_list:
         if (re.findall(f'{blueprint}', word, flags=re.IGNORECASE)):
             return True
@@ -10,6 +17,12 @@ def check_substring(line_list, blueprint):
 
 
 def split_file_lines():
+    """
+    Вспомогательная функция для парса файла с поками СМУ
+
+    :return:
+    """
+
     with open('project/api/searchsploit/all_modules.txt') as file:
         lines_list = file.readlines()
         for j in range(0, len(lines_list)):
@@ -21,6 +34,13 @@ def split_file_lines():
 
 
 def get_urls_list(input_request) -> List[Tuple[str, str]]:
+    """
+    Получает ссылки на поки СМУ по ключевым словам
+
+    :param input_request:
+    :return:
+    """
+
     url_list = []
     print(len(cves_links))
     for line in cves_links:

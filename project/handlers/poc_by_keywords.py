@@ -13,7 +13,6 @@ router = Router()
 
 @router.callback_query(F.data == "pocs_by_keywords")
 async def process_callback_pocs_by_keywords(callback_query: CallbackQuery, state: FSMContext):
-    """ TODO ЧАСТЬ МАКСА"""
 
     await callback_query.message.edit_text("Введите ключевой параметр")
     await state.set_state(FindCVEGroup.find_poc_by_name)
