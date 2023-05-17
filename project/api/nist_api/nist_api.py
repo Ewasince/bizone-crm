@@ -9,7 +9,7 @@ import dateutil.parser as isoparser
 from pytz import timezone
 
 from api.builders.cve_builder import CveTupleBuilder, Cve
-from api.nist_api.enums import CvssVerEnum, CvssSeverityV2Enum, CvssSeverityV3Enum, VectorsEnum, ComplexityEnum
+from api.nist_api.enums import CvssVerEnum, CvssSeverityV2Enum, CvssSeverityV3Enum, VectorsEnumPresent, ComplexityEnum
 from config import config
 
 
@@ -19,9 +19,9 @@ class ParseDateException(ValueError):
 
 class NistApi:
     VECTORS_ABBR: dict = {
-        VectorsEnum.LOCAL.value: 'L',
-        VectorsEnum.ADJACENT_NETWORK.value: 'A',
-        VectorsEnum.NETWORK.value: 'N',
+        VectorsEnumPresent.LOCAL.value: 'L',
+        VectorsEnumPresent.ADJACENT_NETWORK.value: 'A',
+        VectorsEnumPresent.NETWORK.value: 'N',
     }
 
     COMPLEXITY_ABBR: dict = {
@@ -273,7 +273,7 @@ class NistApi:
             pass
 
         if len(key_words) != 0:
-            keys = ' '.join(key_words)
+            keys = '%20'.join(key_words)
             params_dict['key_word'] = f'keywordSearch={keys}'
             pass
 

@@ -2,12 +2,6 @@ import os
 
 from pydantic import BaseModel
 
-
-# from dotenv import load_dotenv
-#
-# load_dotenv("secrets.env")
-# load_dotenv("config.env")
-
 # __all__ = ['config']
 
 

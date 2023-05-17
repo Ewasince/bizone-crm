@@ -1,10 +1,8 @@
 # Welcome
-This bot is developing for bi.zone hackaton
+Этот бот разрабатывается для хакатона от компании BI.ZONE
 
-Current work name is @b1zone_bot
+Бот работает под ником @b1zone_bot
 
 # How to use
 
-1. Set the working root directory
-2. Start app
-
+Для запуска бота в докере, необходимо запустить скрипт **start_bot.prod.sh**
