@@ -243,8 +243,8 @@ class NistApi:
 
             dates_params_list = []
 
-            params_dict['pubStartDate'] = []
-            params_dict['pubEndDate'] = []
+            # params_dict['pubStartDate'] = []
+            # params_dict['pubEndDate'] = []
 
             for day_num in range(0, days_diff, 120):
                 cur_start_date = start_date + timedelta(days=day_num)
@@ -254,6 +254,7 @@ class NistApi:
                 cur_end_date_str = cur_end_date.isoformat()
 
                 param_str = f'pubStartDate={cur_start_date_str}&pubEndDate={cur_end_date_str}'
+                param_str = param_str.replace('+', '%2B')
                 dates_params_list.append(param_str)
 
                 pass
@@ -261,12 +262,19 @@ class NistApi:
             params_dict['date'] = dates_params_list
             pass
 
+        key_words = []
+
         if self.__product_param is not None:
-            params_dict['product'] = self.__product_param
+            key_words.extend(self.__product_param)
             pass
 
         if self._vendor_param is not None:
-            params_dict['vendor'] = self._vendor_param
+            key_words.extend(self._vendor_param)
+            pass
+
+        if len(key_words) != 0:
+            keys = ' '.join(key_words)
+            params_dict['key_word'] = f'keywordSearch={keys}'
             pass
 
         if self.__mentions_param is not None:
@@ -311,32 +319,34 @@ class NistApi:
         start_date_str = date[0]
         end_date_str = date[1]
 
-        try:
-            start_date = isoparser.isoparse(start_date_str)
-        except ValueError as e:
-            log.warning(f"[set_date_param] FAIL Error parsing start date={start_date_str}, e={e}")
-            raise ParseDateException('cannot parse date')
-            pass
-        try:
+        if start_date_str is None:
             end_date = isoparser.isoparse(end_date_str)
-        except ValueError as e:
-            log.warning(f"[set_date_param] FAIL Error parsing end date={end_date_str}, e={e}")
-            raise ParseDateException('cannot parse date')
+            start_date = end_date - timedelta(days=120)
+            pass
+        elif end_date_str is None:
+            start_date = isoparser.isoparse(start_date_str)
+            end_date = start_date + timedelta(days=120)
+        else:
+            start_date = isoparser.isoparse(start_date_str)
+            end_date = isoparser.isoparse(end_date_str)
+            if end_date - start_date > timedelta(days=120):
+                start_date = end_date - timedelta(days=120)
+                pass
             pass
 
         self.__date_param = (start_date, end_date)
         pass
 
     def set_product_param(self, product: str):
-        self.__product_param = tuple(product)
+        self.__product_param = [product]
         pass
 
     def set_vendor_param(self, vendor: str):
-        self._vendor_param = tuple(vendor)
+        self._vendor_param = [vendor]
         pass
 
     def set_mentions_param(self, mentions: Tuple[float, float]):
-        self.__mentions_param = tuple(mentions)
+        self.__mentions_param = [mentions]
         pass
 
     @staticmethod

@@ -3,8 +3,10 @@ from typing import Optional, List, Tuple
 
 from api.builders.cve_builder import Cve
 from api.builders.epss_builder import EpssBuilder
+from api.builders.github_builder import GithubBuilder
 from api.builders.translate_builder import TranslateBuilder
 from api.builders.trends_cve_builder import CveTrendsTuple
+from api.github_api.github_api import GithubRepo
 from api.nist_api.nist_api import NistApi
 from api.trends_api.trends_api import TrendsApi
 from config import config
@@ -16,11 +18,13 @@ class CveRepository:
                  nist_api: NistApi,
                  translate_builder: TranslateBuilder,
                  trends_api: TrendsApi,
-                 epss_api: EpssBuilder):
+                 epss_api: EpssBuilder,
+                 github_builder: GithubBuilder):
         self.__nist_api: NistApi = nist_api
         self.__translate_builder: TranslateBuilder = translate_builder
         self.__trends_api: TrendsApi = trends_api
         self.__epss_api = epss_api
+        self.__github_builder: GithubBuilder = github_builder
         pass
 
     async def a_get_cve_by_id(self, cve_id: str) -> List[Cve]:
@@ -138,13 +142,25 @@ class CveRepository:
         pass
 
     async def prepare_cves(self, cves_list):
-        if config.translate_descriptions:
+        all_cves = cves_list
+        # FIXME проверить как он отедляет cve
+        if len(cves_list) > config.max_cve_output:
+            cves_list = all_cves[:config.max_cve_output]
+            pass
+
+        if config.add_translate:
             cves_list = await self.__translate_builder.a_bunch_translate(cves_list)
             pass
 
         if config.add_epss:
             cves_list = await self.__epss_api.a_bunch_add_epss(cves_list)
             pass
+
+        if config.add_poc:
+            cves_list = self.__github_builder.add_repos(cves_list)
+            pass
+
+        all_cves[:config.max_cve_output] = cves_list
 
 
         return cves_list

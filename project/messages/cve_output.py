@@ -45,6 +45,7 @@ def get_cve_by_id_output_text(result_cve: Cve) -> str:
     cve_mentions = get_param_or_template(result_cve.mentions)
     cve_description = get_param_or_template(result_cve.description)
     cve_elimination = get_param_or_template(result_cve.elimination, 'вовремя обновиться')
+    cve_poc = get_param_or_template(result_cve.poc) # FIXME может быть пустой список!!!
 
     message = f"""
 <b>По данному cve id найдена информация</b>:
@@ -62,7 +63,7 @@ def get_cve_by_id_output_text(result_cve: Cve) -> str:
 ⑪ <b>Информация о количестве упоминаний</b>: {cve_mentions}
 ⑫ <b>Описание CVE</b>: {cve_description}
 ⑬ <b>Необходимые действия по устранению уязвимости</b>: {cve_elimination}
-⑭ <b>POC</b>: В разработке
+⑭ <b>POC</b>: {cve_poc}
 
     """
 

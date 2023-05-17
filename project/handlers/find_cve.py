@@ -114,7 +114,8 @@ async def process_callback_add_start_date(callback_query: CallbackQuery, state: 
     """
         find_cve_menu: Handler for the button that adds the start date parameter
     """
-    await callback_query.message.edit_text("Введите начальную дату в формате 'dd.mm.yyyy'")
+    await callback_query.message.edit_text(
+        "Введите начальную дату в формате 'yyyy-mm-dd'. Учтите, что период должен быть не больше 120 дней.")
     await state.set_state(FindCVEGroup.start_date)
 
 
@@ -149,7 +150,8 @@ async def process_callback_add_end_date(callback_query: CallbackQuery, state: FS
     """
         find_cve_menu: Handler for the button that adds the end date parameter
     """
-    await callback_query.message.edit_text("Введите конечную дату в формате 'dd.mm.yyyy'")
+    await callback_query.message.edit_text(
+        "Введите конечную дату в формате 'yyyy-mm-dd'. Учтите, что период должен быть не больше 120 дней.")
     await state.set_state(FindCVEGroup.end_date)
 
 

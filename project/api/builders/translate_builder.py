@@ -14,16 +14,7 @@ class TranslateBuilder:
 
     async def a_bunch_translate(self, cve_list: List[Cve], only_first: bool = True):
         descriptions = [cve.description for cve in cve_list]
-
-        texts_to_translate = descriptions
-
-        if only_first and len(descriptions) > config.max_cve_output:
-            texts_to_translate = descriptions[:5]
-            pass
-
-        translated_texts = await self.__translator.a_translate(texts_to_translate)
-
-        descriptions[:5] = translated_texts
+        descriptions = await self.__translator.a_translate(descriptions)
 
         for cve, desc in zip(cve_list, descriptions):
             cve.description = desc

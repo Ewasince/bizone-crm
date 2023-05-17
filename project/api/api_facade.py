@@ -1,7 +1,9 @@
 from api.builders.epss_builder import EpssBuilder
+from api.builders.github_builder import GithubBuilder
 from api.builders.translate_builder import TranslateBuilder
 from api.cve_repository import CveRepository
 from api.epss_api.epss_api import EpssApi
+from api.github_api.github_api import GithubRepo
 from api.nist_api.nist_api import NistApi
 from api.trends_api.trends_api import TrendsApi
 from api.yandex_api.translator_api import TranslatorApi
@@ -24,7 +26,10 @@ def get_cve_repo(ver_cvss):
     epss_api = EpssApi()
     epss_builder = EpssBuilder(epss_api)
 
-    cve_repo = CveRepository(nist_api, translate_builder, trends_api, epss_builder)
+    github_repo = GithubRepo()
+    github_builder = GithubBuilder(github_repo)
+
+    cve_repo = CveRepository(nist_api, translate_builder, trends_api, epss_builder, github_builder)
 
     return cve_repo
 

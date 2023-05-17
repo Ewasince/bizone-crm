@@ -1,7 +1,6 @@
 import logging as log
 from dataclasses import dataclass, fields
 from typing import Optional, List
-from api.github_api import get_poc_from_github
 
 from api.nist_api.enums import CvssVerEnum
 
