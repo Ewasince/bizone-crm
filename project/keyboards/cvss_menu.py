@@ -14,31 +14,31 @@ inline_btn_back_cve_menu = InlineKeyboardButton(
 )
 
 inline_btn_back_cvss_menu = InlineKeyboardButton(
-    text="Вернуть к выбору версии SVSS",
+    text="Вернуть к выбору версии CVSS",
     callback_data="find_cve_back_cvss"
 )
 
 inline_btn_cvss_v2_low = InlineKeyboardButton(
-    text="Low", callback_data="find_cve_cvss_v2_low"
+    text="Низкая", callback_data="find_cve_cvss_v2_low"
 )
 inline_btn_cvss_v2_medium = InlineKeyboardButton(
-    text="Medium", callback_data="find_cve_cvss_v2_medium"
+    text="Средняя", callback_data="find_cve_cvss_v2_medium"
 )
 inline_btn_cvss_v2_high = InlineKeyboardButton(
-    text="High", callback_data="find_cve_cvss_v2_high"
+    text="Высокая", callback_data="find_cve_cvss_v2_high"
 )
 
 inline_btn_cvss_v3_low = InlineKeyboardButton(
-    text="Low", callback_data="find_cve_cvss_v3_low"
+    text="Низкая", callback_data="find_cve_cvss_v3_low"
 )
 inline_btn_cvss_v3_medium = InlineKeyboardButton(
-    text="Medium", callback_data="find_cve_cvss_v3_medium"
+    text="Средняя", callback_data="find_cve_cvss_v3_medium"
 )
 inline_btn_cvss_v3_high = InlineKeyboardButton(
-    text="High", callback_data="find_cve_cvss_v3_high"
+    text="Высокая", callback_data="find_cve_cvss_v3_high"
 )
 inline_btn_cvss_v3_critical = InlineKeyboardButton(
-    text="Critical", callback_data="find_cve_cvss_v3_critical"
+    text="Критическая", callback_data="find_cve_cvss_v3_critical"
 )
 
 # Markups
