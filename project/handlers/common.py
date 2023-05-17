@@ -8,6 +8,7 @@ from forms import FindCVEGroup
 from keyboards.main_menu import main_markup, greetings_markup
 from keyboards.params_searching_cve_menu import find_cve_markup
 from keyboards.valyable_cve_menu import most_valuable_cve_markup
+from messages.cve_output import get_params_text
 
 router = Router()
 
@@ -52,8 +53,10 @@ async def process_callback_find_cve(callback_query: CallbackQuery, state: FSMCon
         complexity=None
     )
     user_data = await state.get_data()
+    params_text = get_params_text(user_data)
 
-    await callback_query.message.answer(f"Параметры запроса поиска: {user_data}", reply_markup=find_cve_markup)
+
+    await callback_query.message.answer(f"Параметры запроса поиска: {params_text}", reply_markup=find_cve_markup)
 
 
 @router.callback_query(F.data == "find_cve_by_id")

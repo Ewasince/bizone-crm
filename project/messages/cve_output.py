@@ -7,15 +7,19 @@ NONE_TEMPLATE = 'Нет информации  😞'
 def get_cve_by_id_output_text(result_cve: Cve) -> str:
     additional_sources = ""
     products_with_version = ""
+    pocs = ""
+    print(result_cve.mentions.split())
 
     if result_cve.mentions is not None:
         for link in result_cve.mentions.split():
-            additional_sources += f"""<a href='{link}'>Дополнительный источник</a>"""
-            pass
-        else:
-            additional_sources = NONE_TEMPLATE
-            pass
-        pass
+            additional_sources += f"""\n  -  <a href='{link}'>Дополнительный источник</a>"""
+            
+    else:
+        additional_sources = NONE_TEMPLATE 
+
+    if result_cve.poc is not None:
+        for link in result_cve.poc:
+            pocs += f"""\n  -  <a href='{link}'>poc</a>"""
 
     if result_cve.versions is not None and \
             result_cve.product is not None:
@@ -24,7 +28,7 @@ def get_cve_by_id_output_text(result_cve: Cve) -> str:
         products = result_cve.product.split()
 
         for v, p in zip(versions, products):
-            products_with_version += f"""{p}: {v}"""
+            products_with_version += f"""\n  -  {p}: {v}"""
             pass
         pass
     else:
@@ -45,7 +49,7 @@ def get_cve_by_id_output_text(result_cve: Cve) -> str:
     cve_mentions = get_param_or_template(result_cve.mentions)
     cve_description = get_param_or_template(result_cve.description)
     cve_elimination = get_param_or_template(result_cve.elimination, 'вовремя обновиться')
-    cve_poc = get_param_or_template(result_cve.poc) # FIXME может быть пустой список!!!
+    cve_poc = get_param_or_template(pocs) # FIXME может быть пустой список!!!
 
     message = f"""
 <b>По данному cve id найдена информация</b>:
@@ -59,11 +63,10 @@ def get_cve_by_id_output_text(result_cve: Cve) -> str:
 ⑦ <b>Сложность атаки</b>: {cve_complexity}
 ⑧ <b>EPSS рейтинг</b>: {cve_epss}
 ⑨ <b>Продукт/вендор и версия для которого характерна CVE</b>: {cve_products_with_version}
-⑩ <b>Ссылки на статьи с упоминаниями и другая полезная информация</b>: {cve_additional_sources}
-⑪ <b>Информация о количестве упоминаний</b>: {cve_mentions}
-⑫ <b>Описание CVE</b>: {cve_description}
-⑬ <b>Необходимые действия по устранению уязвимости</b>: {cve_elimination}
-⑭ <b>POC</b>: {cve_poc}
+⑩ <b>Ссылки на статьи с упоминаниями и другая полезная информация</b>: {additional_sources}
+⑪ <b>Описание CVE</b>: {cve_description}
+⑫ <b>Необходимые действия по устранению уязвимости</b>: {cve_elimination}
+⑬ <b>POC</b>: {cve_poc}
 
     """
 
@@ -78,8 +81,7 @@ def get_trends_cve_output_text(result_cve: CveTrendsTuple, number: int) -> str:
     additional_sources = ""
 
     for item in result_cve.vendor_advisories:
-        additional_sources += f"""
-    <a href='{item}'>Дополнительный источник</a>"""
+        additional_sources += f"""\n  -  <a href='{item}'>Дополнительный источник</a>"""
 
     message = f"""
     Номер: {number + 1}
@@ -103,3 +105,23 @@ def get_trends_cve_output_text(result_cve: CveTrendsTuple, number: int) -> str:
 
     """
     return message
+
+def get_params_text(params: dict) -> str:
+
+    result_text = ""
+    
+    for k, v in params.items():
+        if not v: 
+            params[k] = "Значение не задано"
+
+    result_text = f"""
+    <b>Вендор</b>: {params["vendor"]}
+    <b>Продукт</b>: {params["product"]}
+    <b>Начальная дата</b>: {params["start_date"]}
+    <b>Конечная дата</b>: {params["end_date"]}
+    <b>Версия CVSS</b>: {params["cvss_version"]}
+    <b>Значение cvss</b>: {params["cvss_param"][0] if type(params["cvss_param"])==list else params["cvss_param"]}
+    <b>Вектор</b>: {params["vector"][0] if type(params["vector"])==list else params["vector"]}
+    <b>Сложность</b>: {params["complexity"][0] if type(params["complexity"])==list else params["complexity"]}
+    """
+    return result_text

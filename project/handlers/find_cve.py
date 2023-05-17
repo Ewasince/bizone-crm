@@ -14,7 +14,7 @@ from keyboards.cvss_menu import find_cve_cvss_markup
 from keyboards.main_menu import main_markup
 from keyboards.params_searching_cve_menu import find_cve_markup
 from keyboards.vector_menu import vector_markup
-from messages.cve_output import get_cve_by_id_output_text
+from messages.cve_output import get_cve_by_id_output_text, get_params_text
 
 router = Router()
 
@@ -77,10 +77,12 @@ async def add_vendor(message: Message, state: FSMContext):
     await state.update_data(vendor=input_vendor)
 
     await state.set_state(FindCVEGroup.default_state)
-    user_date: Dict[str, str] = await state.get_data()
+    user_data: Dict[str, str] = await state.get_data()
+
+    params_text = get_params_text(user_data)
 
     await message.answer(
-        f"Название вендора успешно установлено. Теперь данные: {user_date}",
+        f"Название вендора успешно установлено. Установленные параметры :{params_text}",
         reply_markup=find_cve_markup
     )
 
@@ -103,8 +105,10 @@ async def addiing_product_name(message: Message, state: FSMContext):
     user_data = await state.get_data()
     await state.set_state(FindCVEGroup.default_state)
 
+    params_text = get_params_text(user_data)
+
     await message.answer(
-        f"Название продукта установлено. Теперь данные: {user_data}",
+        f"Название продукта установлено. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
 
@@ -138,9 +142,11 @@ async def adding_start_date(message: Message, state: FSMContext):
 
     user_data = await state.get_data()
     await state.set_state(FindCVEGroup.default_state)
+    params_text = get_params_text(user_data)
+
 
     await message.answer(
-        f"Начальная дата установлена. Теперь данные: {user_data}",
+        f"Начальная дата установлена. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
 
@@ -176,9 +182,11 @@ async def addind_end_date(message: Message, state: FSMContext):
 
     user_data = await state.get_data()
     await state.set_state(FindCVEGroup.default_state)
+    params_text = get_params_text(user_data)
+
 
     await message.answer(
-        f"Конечная дата установлена. Теперь данные: {user_data}",
+        f"Конечная дата установлена. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
 

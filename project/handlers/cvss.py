@@ -5,6 +5,7 @@ from aiogram.types import CallbackQuery
 from api.nist_api.enums import CvssVerEnum, CvssSeverityV2Enum, CvssSeverityV3Enum
 from keyboards.cvss_menu import find_cve_cvss_markup, cvss_v2_markup, cvss_v3_markup
 from keyboards.params_searching_cve_menu import find_cve_markup
+from messages.cve_output import get_params_text
 
 router = Router()
 
@@ -41,9 +42,11 @@ async def process_callback_back_to_cve(callback_query: CallbackQuery, state: FSM
         cvss_menu: Handler for the button that returns to the cve menu of parameterized search cves
     """
     user_data = await state.get_data()
+    params_text = get_params_text(user_data)
+
 
     await callback_query.message.edit_text(
-        f"Параметры запроса поиска: {user_data}",
+        f"Параметры запроса поиска: {params_text}",
         reply_markup=find_cve_markup
     )
 
@@ -68,9 +71,11 @@ async def process_callback_svss_v2_low(callback_query: CallbackQuery, state: FSM
 
     await state.update_data(cvss_param=[CvssSeverityV2Enum.LOW.value])
     user_data = await state.get_data()
+    params_text = get_params_text(user_data)
+
 
     await callback_query.message.edit_text(
-        f"Главное меню, Параметры на данный момент: {user_data}",
+        f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
 
@@ -83,11 +88,14 @@ async def process_callback_cvss_v2_medium(callback_query: CallbackQuery, state: 
 
     await state.update_data(cvss_param=[CvssSeverityV2Enum.MEDIUM.value])
     user_data = await state.get_data()
+    params_text = get_params_text(user_data)
+
 
     await callback_query.message.edit_text(
-        f"Главное меню, Параметры на данный момент: {user_data}",
+        f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
+
 
 
 @router.callback_query(F.data == "find_cve_cvss_v2_high")
@@ -98,24 +106,10 @@ async def process_callback_svss_v2_high(callback_query: CallbackQuery, state: FS
 
     await state.update_data(cvss_param=[CvssSeverityV2Enum.HIGH.value])
     user_data = await state.get_data()
+    params_text = get_params_text(user_data)
 
     await callback_query.message.edit_text(
-        f"Главное меню, Параметры на данный момент: {user_data}",
-        reply_markup=find_cve_markup
-    )
-
-
-@router.callback_query(F.data == "find_cve_cvss_v3_none")
-async def process_callback_svss_v3_none(callback_query: CallbackQuery, state: FSMContext):
-    """
-        cvss_menu: Handler for the button that set cvss v3 parameter to NONE
-    """
-
-    await state.update_data(cvss_param=None)
-    user_data = await state.get_data()
-
-    await callback_query.message.edit_text(
-        f"Главное меню, Параметры на данный момент: {user_data}",
+        f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
 
@@ -128,9 +122,10 @@ async def process_callback_svss_v3_low(callback_query: CallbackQuery, state: FSM
 
     await state.update_data(cvss_param=[CvssSeverityV3Enum.LOW.value])
     user_data = await state.get_data()
+    params_text = get_params_text(user_data)
 
     await callback_query.message.edit_text(
-        f"Главное меню, Параметры на данный момент: {user_data}",
+        f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
 
@@ -142,10 +137,11 @@ async def process_callback_svss_v3_medium(callback_query: CallbackQuery, state: 
     """
 
     await state.update_data(cvss_param=[CvssSeverityV3Enum.MEDIUM.value])
-    user_data = await  state.get_data()
+    user_data = await state.get_data()
+    params_text = get_params_text(user_data)
 
     await callback_query.message.edit_text(
-        f"Главное меню, Параметры на данный момент: {user_data}",
+        f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
 
@@ -158,11 +154,13 @@ async def process_callback_svss_v3_high(callback_query: CallbackQuery, state: FS
 
     await state.update_data(cvss_param=[CvssSeverityV3Enum.HIGH.value])
     user_data = await state.get_data()
+    params_text = get_params_text(user_data)
 
     await callback_query.message.edit_text(
-        f"Главное меню, Параметры на данный момент: {user_data}",
+        f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
+
 
 
 @router.callback_query(F.data == "find_cve_cvss_v3_critical")
@@ -173,8 +171,10 @@ async def process_callback_svss_v3_critical(callback_query: CallbackQuery, state
 
     await state.update_data(cvss_param=[CvssSeverityV3Enum.CRITICAL.value])
     user_data = await state.get_data()
+    params_text = get_params_text(user_data)
 
     await callback_query.message.edit_text(
-        f"Главное меню, Параметры на данный момент: {user_data}",
+        f"Значение CVSS успешно установлено установлены. Установленные параметры: {params_text}",
         reply_markup=find_cve_markup
     )
+

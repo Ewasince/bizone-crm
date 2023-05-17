@@ -29,10 +29,6 @@ inline_btn_cvss_v2_high = InlineKeyboardButton(
 )
 
 
-inline_btn_cvss_v3_none = InlineKeyboardButton(
-    text="None",
-    callback_data="find_cve_cvss_v3_none"
-)
 inline_btn_cvss_v3_low = InlineKeyboardButton(
     text="Low", callback_data="find_cve_cvss_v3_low"
 )
@@ -65,7 +61,6 @@ cvss_v2_markup = InlineKeyboardMarkup(
 
 cvss_v3_markup = InlineKeyboardMarkup(
     inline_keyboard=[
-        [inline_btn_cvss_v3_none],
         [inline_btn_cvss_v3_low],
         [inline_btn_cvss_v3_medium],
         [inline_btn_cvss_v3_high],

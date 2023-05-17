@@ -42,7 +42,7 @@ greetings_markup =  InlineKeyboardMarkup(
 main_markup = InlineKeyboardMarkup(
     inline_keyboard=[
         [inline_btn_find_by_id],
-        [inline_btn_find_cve_tg, inline_btn_find_cve_web],
+        [inline_btn_find_cve_tg],
         [inline_btn_most_valuable_cve],
         [inline_btn_subscribe_on_news]
     ]
