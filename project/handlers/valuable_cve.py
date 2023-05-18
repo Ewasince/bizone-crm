@@ -50,40 +50,41 @@ async def procress_callback_most_valuable_day(callback_query: CallbackQuery, sta
                            reply_markup=main_markup
                            )
 
-    @router.callback_query(F.data == "most_valuable_week")
-    async def procress_callback_most_valuable_week(callback_query: CallbackQuery, state: FSMContext):
-        """
-            valuable_cve: Handler for button that sets the parameter period to week
-        """
-        period = "7days"
-        result = []
 
-        cve_repo = get_cve_repo(None)
+@router.callback_query(F.data == "most_valuable_week")
+async def procress_callback_most_valuable_week(callback_query: CallbackQuery, state: FSMContext):
+    """
+        valuable_cve: Handler for button that sets the parameter period to week
+    """
+    period = "7days"
+    result = []
 
-        try:
-            result = await cve_repo.a_get_trends_cve(period)
+    cve_repo = get_cve_repo(None)
 
-            if len(result) == 0:
-                raise ValueError()
+    try:
+        result = await cve_repo.a_get_trends_cve(period)
 
-        except ValueError as e:
-            await answer_decorator(callback_query.message,
-                                   f"⚠ Не найдено CVE ⚠"
-                                   )
-        except Exception as e:
-            log.warning(f'[procress_callback_most_valuable_week] FAIL e={e}')
+        if len(result) == 0:
+            raise ValueError()
 
-            await answer_decorator(callback_query.message,
-                                   f"Ошибка выполнения запроса 😢"
-                                   )
-            pass
-
-        for i in range(len(result)):
-            await answer_decorator(callback_query.message,
-                                   text=get_trends_cve_output_text(result[i], i)
-                                   )
+    except ValueError as e:
+        await answer_decorator(callback_query.message,
+                               f"⚠ Не найдено CVE ⚠"
+                               )
+    except Exception as e:
+        log.warning(f'[procress_callback_most_valuable_week] FAIL e={e}')
 
         await answer_decorator(callback_query.message,
-                               text="Меню",
-                               reply_markup=main_markup
+                               f"Ошибка выполнения запроса 😢"
                                )
+        pass
+
+    for i in range(len(result)):
+        await answer_decorator(callback_query.message,
+                               text=get_trends_cve_output_text(result[i], i)
+                               )
+
+    await answer_decorator(callback_query.message,
+                           text="Меню",
+                           reply_markup=main_markup
+                           )
