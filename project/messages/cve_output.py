@@ -153,9 +153,9 @@ class ParamsFormatter:
         return additional_sources
 
     def get_description(self, description):
+        description = self.__get_param_or_template(description)
         description = html.quote(description)
-        print(description)
-        return self.__get_param_or_template(description)
+        return description
 
     def get_pocs(self, pocs):
         pocs_str = ""
