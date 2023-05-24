@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from config import config
+from adjustment.config import config
 from forms import FindCVEGroup
 from handlers.utils import answer_decorator
 from keyboards.main_menu import main_markup, greetings_markup

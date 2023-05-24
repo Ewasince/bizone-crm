@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from api.searchsploit.searchsploit import get_urls_list
-from config import config
+from adjustment.config import config
 from forms import FindCVEGroup
 from handlers.utils import answer_decorator
 from keyboards.main_menu import main_markup

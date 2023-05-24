@@ -2,7 +2,7 @@ from typing import List
 
 from github import Github
 
-from config import config
+from adjustment.config import config
 
 
 class GithubRepo:

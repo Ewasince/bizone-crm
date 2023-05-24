@@ -9,7 +9,7 @@ from aiogram.types import Message, CallbackQuery
 
 from api.api_facade import get_cve_repo
 from api.cve_repository import ParamsError
-from config import config
+from adjustment.config import config
 from forms import FindCVEGroup
 from handlers.utils import answer_decorator
 from keyboards.complexity_menu import complexity_markup

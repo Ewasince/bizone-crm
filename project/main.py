@@ -5,7 +5,7 @@ from logging import handlers
 
 from aiogram import Bot, Dispatcher
 
-from config import config
+from adjustment.config import config
 from handlers import common_router, find_cve_router, cvss_router, vector_router, complexity_router, valuable_cve_router, \
     pocs_router
 

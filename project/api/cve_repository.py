@@ -8,7 +8,7 @@ from api.builders.translate_builder import TranslateBuilder
 from api.builders.trends_cve_builder import CveTrendsTuple
 from api.nist_api.nist_api import NistApi
 from api.trends_api.trends_api import TrendsApi
-from config import config
+from adjustment.config import config
 
 
 class ParamsError(Exception):

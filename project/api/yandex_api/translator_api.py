@@ -5,7 +5,7 @@ from typing import List
 
 from aiogram.client.session import aiohttp
 
-from config import config
+from adjustment.config import config
 
 IAM_TOKEN = config.translator_token
 folder_id = config.translator_folder
@@ -15,6 +15,7 @@ class TranslatorApi:
     __target_language = 'ru'
     __source_language = 'en'
     __url = 'https://translate.api.cloud.yandex.net/translate/v2/translate'
+    __url_get_token = 'https://iam.api.cloud.yandex.net/iam/v1/tokens'
 
     async def a_translate(self, texts: List[str]) -> List[str]:
         """
